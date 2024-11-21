@@ -196,4 +196,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calendar.render();
 });
-//alteração teste
