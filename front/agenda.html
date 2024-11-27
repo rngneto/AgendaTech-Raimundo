@@ -18,24 +18,6 @@
 <script src="script.js"></script>
 
 <body>
-    <!-- Card de Busca -->
-    <div class="search-card">
-        <div class="search-icon">
-            <img src="images/search-icon.png" alt="Buscar evento">
-        </div>
-        <div class="search-input">
-            <input type="text" id="search-input" placeholder="Buscar evento..." />
-        </div>
-        <button class="search-button">Buscar</button>
-    </div>
-
-    <!-- Calendário -->
-    <div id="calendar-container" class="calendar-container">
-        <div id="calendar"></div>
-    </div>
-
-
-
 
     <!-- Barra de navegação -->
     <div class="navbar">
@@ -148,6 +130,19 @@
         </div>
     </div>
 
+    <!-- Lembrete -->
+    <div class="post-it">
+        <div class="post-it-pin"></div>
+        <div class="post-it-content">
+            <h3>Próximos Eventos</h3>
+            <ul>
+                <li><strong>Inovação nas universidades</strong><br>20/11/2024 - Cine Teatro UFPI</li>
+                <li><strong>Desenvolvimento de Jogos</strong><br>20/11/2024 - Espaço Integrado II</li>
+                <li><strong>Cibersegurança</strong><br>25/11/2024 - YouTube</li>
+            </ul>
+        </div>
+    </div>
+
     <!-- Modal de Perfil -->
     <div id="profile-modal" class="modal" onclick="closeProfileModal(event)">
         <div class="modal-content">
@@ -168,7 +163,8 @@
                 <p><strong>Atividades Extracurriculares:</strong> Monitor de Algoritmos, Membro do Clube de Programação
                 </p>
                 <p><strong>Link do Lattes:</strong> <a href="https://lattes.cnpq.br/1234567890123456"
-                        target="_blank">Lattes - Crestfallen Warrior</a></p>
+                        target="_blank">Lattes
+                        - Crestfallen Warrior</a></p>
             </div>
 
             <button onclick="closeProfileModal()">Fechar</button>
@@ -237,7 +233,6 @@
         </div>
     </div>
 
-
     <!-- Modal de Login -->
     <div class="modal" id="login-modal">
         <div class="modal-content">
@@ -295,33 +290,47 @@
         </div>
     </div>
 
-    <!-- Card de Busca de Evento -->
-    <div class="search-card">
+    <div class="search-bar">
+        <!-- Lupa -->
         <div class="search-icon">
-            <img src="images/lupa.png" alt="Buscar Evento" />
+            <img src="images/lupa.png" alt="Lupa">
         </div>
-        <div class="search-input">
-            <input type="text" placeholder="Buscar evento..." id="search-event" />
-        </div>
-        <button class="search-button" onclick="searchEvent()">Enter</button>
+        <!-- Busca de Eventos -->
+        <input type="text" id="search-input" placeholder="Buscar eventos" />
+
+        <!-- Botão "Procurar" -->
+        <button id="search-button" class="search-button">Procurar</button>
     </div>
 
-        <!-- Seção de Atalhos -->
-        <div class="shortcuts-container">
-            <h3>Atalhos</h3>
-            <div class="shortcut">
-                <a href="https://www.ufpi.br" target="_blank">
-                    <img src="images/ufpi-icon.png" alt="UFPI" />
-                    <span>UFPI</span>
-                </a>
-            </div>
-            <div class="shortcut">
-                <a href="https://www.sigaa.ufpi.br" target="_blank">
-                    <img src="images/sigaa-icon.png" alt="SIGAA UFPI" />
-                    <span>SIGAA UFPI</span>
-                </a>
-            </div>
+    <!-- Área de Cidade -->
+    <div class="city-area">
+        <div class="city-header" onclick="toggleCityModal()">
+            <img src="images/location-icon.png" alt="Ícone de localização" class="location-icon">
+            <span class="current-city">Teresina</span> <!-- Cidade atual -->
         </div>
+
+        <!-- Modal de Seleção de Cidade -->
+        <div id="city-modal" class="city-modal hidden">
+            <h3>Selecione sua cidade</h3>
+            <button class="location-button" onclick="useCurrentLocation()">Usar minha localização atual</button>
+            <p class="location-description">Encontre eventos perto de você</p>
+
+            <!-- Lista de Cidades -->
+            <ul class="city-list">
+                <li>Teresina</li>
+                <li>Fortaleza</li>
+                <li>Salvador</li>
+                <li>Recife</li>
+                <li>São Luís</li>
+                <li>Natal</li>
+                <li>Maceió</li>
+                <li>Aracaju</li>
+                <li>João Pessoa</li>
+                <li>São Paulo</li>
+                <li>Rio de Janeiro</li>
+            </ul>
+        </div>
+    </div>
 
     <div class="container">
         <!-- Cards de Eventos -->
@@ -400,6 +409,63 @@
         </div>
     </div>
 
+    <div class="filter-section">
+        <h3>Filtrar por</h3>
+
+        <!-- Filtro por Categoria -->
+        <div class="filter-item" onclick="toggleCategoryModal()">
+            <span>Categoria</span>
+        </div>
+        <div id="category-modal" class="filter-modal hidden">
+            <ul>
+                <li>Games e Geek</li>
+                <li>Cursos</li>
+                <li>Workshops</li>
+                <li>Palestras</li>
+            </ul>
+        </div>
+
+        <!-- Filtro por Data -->
+        <div class="filter-item" onclick="toggleDateModal()">
+            <span>Data</span>
+        </div>
+        <div id="date-modal" class="filter-modal hidden">
+            <ul>
+                <li>Hoje</li>
+                <li>Amanhã</li>
+                <li>Esta semana</li>
+                <li>Próxima semana</li>
+                <li>Este mês</li>
+                <li>Próximo mês</li>
+                <li><input type="date" id="custom-date"></li>
+            </ul>
+        </div>
+
+        <!-- Filtro por Preço -->
+        <div class="filter-item" onclick="togglePriceModal()">
+            <span>Preço</span>
+        </div>
+        <div id="price-modal" class="filter-modal hidden">
+            <ul>
+                <li>Grátis</li>
+                <li>Pago</li>
+                <li>Qualquer preço</li>
+            </ul>
+        </div>
+
+        <!-- Filtro por Tipo de Evento -->
+        <div class="filter-item" onclick="toggleTypeModal()">
+            <span>Tipo de Evento</span>
+        </div>
+        <div id="type-modal" class="filter-modal hidden">
+            <ul>
+                <li>Presencial</li>
+                <li>Online</li>
+                <li>Semi-presencial</li>
+            </ul>
+        </div>
+    </div>
+
     <!-- Chat em Tempo Real -->
     <div class="chat-container">
         <h2>Chat em Tempo Real</h2>
@@ -450,17 +516,16 @@
         </div>
     </div>
 
-
-    <!-- Adicionando o sistema de chat abaixo dos cards -->
+    <!-- Contêiner de Comentários e Avaliações -->
     <div class="chat-container">
         <h2>Comentários e Avaliações</h2>
         <div class="chat-box">
-            <!-- Mensagens de exemplo -->
+            <!-- Mensagens de exemplo (visíveis no contêiner principal) -->
             <div class="message">
                 <strong>João Silva:</strong>
                 <p>O evento <a href="https://www.example.com/event1" target="_blank">Inovação nas universidades:
-                        desafios e oportunidades</a> foi incrível! As palestras foram muito boas e o local estava
-                    perfeito!</p>
+                        desafios e
+                        oportunidades</a> foi incrível! As palestras foram muito boas e o local estava perfeito!</p>
                 <span class="rating">⭐️⭐️⭐️⭐️⭐️</span>
             </div>
             <div class="message">
@@ -474,10 +539,40 @@
             <input type="text" id="user-message" placeholder="Deixe sua opinião...">
             <button onclick="sendMessage()">Enviar</button>
         </div>
-    </div>
+        <button onclick="toggleModal()" class="view-more-button">Ver mais comentários</button>
     </div>
 
-
+    <!-- Modal de Comentários -->
+    <div id="comment-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleModal()">&times;</span>
+            <h2>Comentários e Avaliações</h2>
+            <div class="modal-chat-box">
+                <!-- Mensagens completas (visíveis apenas no modal) -->
+                <div class="message">
+                    <strong>João Silva:</strong>
+                    <p>O evento <a href="https://www.example.com/event1" target="_blank">Inovação nas universidades:
+                            desafios e oportunidades</a> foi incrível! As palestras foram muito boas e o local estava
+                        perfeito!</p>
+                    <span class="rating">⭐️⭐️⭐️⭐️⭐️</span>
+                </div>
+                <div class="message">
+                    <strong>Ana Costa:</strong>
+                    <p>Adorei o evento <a href="https://www.example.com/event2" target="_blank">Métricas e indicadores
+                            de
+                            publicações científicas</a>, mas o horário poderia ser melhor. De resto, tudo ótimo!</p>
+                    <span class="rating">⭐️⭐️⭐️⭐️</span>
+                </div>
+                <!-- Novo comentário exclusivo do modal -->
+                <div class="message">
+                    <strong>Carlos Pereira:</strong>
+                    <p>O evento <a href="https://www.example.com/event3" target="_blank">Palestra: Desenvolvimento de
+                            Jogos</a> foi muito inspirador! Recomendo para todos que estão começando na área.</p>
+                    <span class="rating">⭐️⭐️⭐️⭐️⭐️</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Seção "Seus Certificados" -->
     <div class="certificates-container">
@@ -559,6 +654,47 @@
             }
         };
     </script>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Seção: Encontre Eventos -->
+            <div class="footer-column">
+                <h2 class="footer-title">Encontre Eventos</h2>
+                <ul class="footer-list">
+                    <li>Hoje</li>
+                    <li>Amanhã</li>
+                    <li>Esta semana</li>
+                    <li>Este fim de semana</li>
+                    <li>Próxima semana</li>
+                    <li>Este mês</li>
+                </ul>
+            </div>
+
+            <!-- Seção: Cidades -->
+            <div class="footer-column">
+                <h2 class="footer-title">Cidades</h2>
+                <ul class="footer-list">
+                    <li>Teresina</li>
+                    <li>Fortaleza</li>
+                    <li>Salvador</li>
+                    <li>Recife</li>
+                    <li>João Pessoa</li>
+                </ul>
+            </div>
+
+            <!-- Seção: Categorias -->
+            <div class="footer-column">
+                <h2 class="footer-title">Categorias</h2>
+                <ul class="footer-list">
+                    <li>Tecnologia</li>
+                    <li>Geek</li>
+                    <li>Workshops</li>
+                    <li>Congressos e palestras</li>
+                    <li>Games</li>
+                </ul>
+            </div>
+        </div>
 
 </body>
 
