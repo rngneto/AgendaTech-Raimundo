@@ -341,7 +341,7 @@ body {
     padding: 10px;
     box-sizing: border-box;
 
-    /* Alteração: Sombra sutil */
+    /* Sombra sutil */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -349,17 +349,20 @@ body {
 .navbar-left img {
     width: 75px;
     height: auto;
-    cursor: help; /* Alteração: Cursor de ajuda */
+    cursor: help; /* Cursor de ajuda */
 }
 
 /* Alinhamento da barra de navegação ao centro (links) */
 .navbar-center a {
     color: white;
     text-decoration: none;
-    margin: 0 15px;
+
+    /* Reduzido o espaçamento horizontal */
+    margin: 0 10px; /* Antes era 15px */
+
     font-size: 16px;
     font-weight: bold;
-    padding: 5px 10px; /* Adiciona espaço interno para parecer botões */
+    padding: 5px 10px; /* Espaçamento interno para parecer botões */
     border: 1px solid white; /* Contorno branco */
     border-radius: 4px; /* Bordas arredondadas */
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -371,17 +374,13 @@ body {
     border-color: #f39c12; /* Contorno laranja no hover */
 }
 
-
-.navbar-center a:hover {
-    color: #f39c12;
-}
-
 /* Alinhamento da barra de navegação à direita (ícone de usuário) */
 .navbar-right img {
     width: 40px;
     height: auto;
     cursor: pointer;
 }
+
 
 /* Estilos do modal de login */
 .modal {
@@ -732,8 +731,10 @@ button[type="button"]:hover {
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f0f0f0;
-    width: 240px; /* Aumentei a largura para evitar cortes */
-    max-width: 90%; /* Responsivo */
+    width: 240px;
+    /* Aumentei a largura para evitar cortes */
+    max-width: 90%;
+    /* Responsivo */
     position: absolute;
     top: 85px;
     left: 10px;
@@ -742,17 +743,22 @@ button[type="button"]:hover {
 
 /* Ícone da lupa */
 .search-icon img {
-    width: 18px; /* Tamanho da lupa */
+    width: 18px;
+    /* Tamanho da lupa */
     height: 18px;
-    margin-right: 5px; /* Espaço entre a lupa e o campo */
+    margin-right: 5px;
+    /* Espaço entre a lupa e o campo */
 }
 
 /* Campo de busca */
 #search-input {
-    flex: 1; /* O campo ocupa o espaço restante */
+    flex: 1;
+    /* O campo ocupa o espaço restante */
     border: none;
-    outline: none; /* Remove contorno padrão */
-    background-color: transparent; /* Fundo transparente */
+    outline: none;
+    /* Remove contorno padrão */
+    background-color: transparent;
+    /* Fundo transparente */
     font-size: 12px;
     color: #333;
     padding: 0;
@@ -764,11 +770,14 @@ button[type="button"]:hover {
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 4px 6px; /* Botão menor */
-    font-size: 10px; /* Texto menor */
+    padding: 4px 6px;
+    /* Botão menor */
+    font-size: 10px;
+    /* Texto menor */
     cursor: pointer;
     transition: background-color 0.3s ease;
-    white-space: nowrap; /* Impede que o texto do botão quebre */
+    white-space: nowrap;
+    /* Impede que o texto do botão quebre */
 }
 
 .search-button:hover {
@@ -779,19 +788,22 @@ button[type="button"]:hover {
 /* Footer principal */
 .footer {
     width: 100%;
-    background-color: #333; /* Fundo igual ao header */
+    background-color: #333;
+    /* Fundo igual ao header */
     color: white;
     padding: 20px 10px;
     box-sizing: border-box;
     display: flex;
-    flex-direction: column; /* Alinha colunas e botão verticalmente */
+    flex-direction: column;
+    /* Alinha colunas e botão verticalmente */
     align-items: center;
 }
 
 /* Contêiner das colunas */
 .footer-container {
     display: flex;
-    justify-content: space-between; /* Espaça as colunas horizontalmente */
+    justify-content: space-between;
+    /* Espaça as colunas horizontalmente */
     max-width: 1200px;
     width: 100%;
 }
@@ -803,7 +815,8 @@ button[type="button"]:hover {
 
 .footer-title {
     font-size: 16px;
-    color: #f39c12; /* Destaque em laranja */
+    color: #f39c12;
+    /* Destaque em laranja */
     margin-bottom: 10px;
 }
 
@@ -816,10 +829,13 @@ button[type="button"]:hover {
 .footer-list li {
     margin: 5px 0;
     cursor: pointer;
-    transition: transform 0.3s ease, color 0.3s ease; /* Suaviza transformações e mudanças de cor */
+    transition: transform 0.3s ease, color 0.3s ease;
+    /* Suaviza transformações e mudanças de cor */
 }
 
 .footer-list li:hover {
-    color: #f39c12; /* Altera a cor para laranja ao passar o mouse */
-    transform: translateX(5px); /* Move o item ligeiramente para a direita */
+    color: #f39c12;
+    /* Altera a cor para laranja ao passar o mouse */
+    transform: translateX(5px);
+    /* Move o item ligeiramente para a direita */
 }
