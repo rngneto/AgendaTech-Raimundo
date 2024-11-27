@@ -381,7 +381,6 @@ body {
     cursor: pointer;
 }
 
-
 /* Estilos do modal de login */
 .modal {
     display: none;
@@ -838,4 +837,90 @@ button[type="button"]:hover {
     /* Altera a cor para laranja ao passar o mouse */
     transform: translateX(5px);
     /* Move o item ligeiramente para a direita */
+}
+
+
+
+
+
+
+
+/* Estilo geral do post-it */
+.post-it {
+    position: fixed; /* Fixado inicialmente */
+    top: 100px; /* Distância do topo */
+    right: 20px; /* Alinhado à direita */
+    width: 180px;
+    min-height: 150px;
+    background-color: #fffad1;
+    border: 1px solid #e0c066;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    color: #333;
+    text-align: left;
+    transform: rotate(-2deg);
+    z-index: 1000;
+}
+
+/* Pino no topo do post-it */
+.post-it-pin {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 15px;
+    background-color: #e04a38;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+/* Conteúdo do post-it */
+.post-it-content {
+    text-align: center;
+    padding: 5px;
+}
+
+.post-it-content h3 {
+    font-size: 16px;
+    color: #d17b0f;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.post-it-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+}
+
+.post-it-content li {
+    margin-bottom: 8px;
+}
+
+.post-it-content li strong {
+    color: #d17b0f;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .post-it {
+        position: relative; /* Deixa de ser fixo */
+        margin: 20px auto; /* Centraliza na tela */
+        top: unset; /* Remove distância do topo */
+        right: unset; /* Remove alinhamento à direita */
+        transform: rotate(0deg); /* Remove a inclinação */
+        width: 100%; /* Ocupa toda a largura disponível */
+        max-width: 300px; /* Limita a largura em telas menores */
+    }
+}
+
+@media (max-width: 480px) {
+    .post-it {
+        margin-top: 10px; /* Dá mais espaço no topo em telas muito pequenas */
+    }
 }
