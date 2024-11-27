@@ -516,17 +516,16 @@
         </div>
     </div>
 
-
-    <!-- Adicionando o sistema de chat abaixo dos cards -->
+    <!-- Contêiner de Comentários e Avaliações -->
     <div class="chat-container">
         <h2>Comentários e Avaliações</h2>
         <div class="chat-box">
-            <!-- Mensagens de exemplo -->
+            <!-- Mensagens de exemplo (visíveis no contêiner principal) -->
             <div class="message">
                 <strong>João Silva:</strong>
                 <p>O evento <a href="https://www.example.com/event1" target="_blank">Inovação nas universidades:
-                        desafios e oportunidades</a> foi incrível! As palestras foram muito boas e o local estava
-                    perfeito!</p>
+                        desafios e
+                        oportunidades</a> foi incrível! As palestras foram muito boas e o local estava perfeito!</p>
                 <span class="rating">⭐️⭐️⭐️⭐️⭐️</span>
             </div>
             <div class="message">
@@ -540,7 +539,39 @@
             <input type="text" id="user-message" placeholder="Deixe sua opinião...">
             <button onclick="sendMessage()">Enviar</button>
         </div>
+        <button onclick="toggleModal()" class="view-more-button">Ver mais comentários</button>
     </div>
+
+    <!-- Modal de Comentários -->
+    <div id="comment-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleModal()">&times;</span>
+            <h2>Comentários e Avaliações</h2>
+            <div class="modal-chat-box">
+                <!-- Mensagens completas (visíveis apenas no modal) -->
+                <div class="message">
+                    <strong>João Silva:</strong>
+                    <p>O evento <a href="https://www.example.com/event1" target="_blank">Inovação nas universidades:
+                            desafios e oportunidades</a> foi incrível! As palestras foram muito boas e o local estava
+                        perfeito!</p>
+                    <span class="rating">⭐️⭐️⭐️⭐️⭐️</span>
+                </div>
+                <div class="message">
+                    <strong>Ana Costa:</strong>
+                    <p>Adorei o evento <a href="https://www.example.com/event2" target="_blank">Métricas e indicadores
+                            de
+                            publicações científicas</a>, mas o horário poderia ser melhor. De resto, tudo ótimo!</p>
+                    <span class="rating">⭐️⭐️⭐️⭐️</span>
+                </div>
+                <!-- Novo comentário exclusivo do modal -->
+                <div class="message">
+                    <strong>Carlos Pereira:</strong>
+                    <p>O evento <a href="https://www.example.com/event3" target="_blank">Palestra: Desenvolvimento de
+                            Jogos</a> foi muito inspirador! Recomendo para todos que estão começando na área.</p>
+                    <span class="rating">⭐️⭐️⭐️⭐️⭐️</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Seção "Seus Certificados" -->
@@ -624,7 +655,7 @@
         };
     </script>
 
-
+    <!-- Rodapé -->
     <footer class="footer">
         <div class="footer-container">
             <!-- Seção: Encontre Eventos -->

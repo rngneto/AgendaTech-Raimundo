@@ -191,3 +191,20 @@ function toggleTypeModal() {
     modal.classList.toggle("hidden");
 }
 
+// Alterna a visibilidade do modal de comentários
+function toggleModal() {
+    const modal = document.getElementById("comment-modal");
+    modal.classList.toggle("hidden");
+    modal.style.display = modal.classList.contains("hidden") ? "none" : "flex";
+}
+
+// Função para enviar uma mensagem (protótipo)
+function sendMessage() {
+    const message = document.getElementById("user-message").value.trim();
+    if (message) {
+        alert("Sua mensagem foi enviada: " + message);
+        document.getElementById("user-message").value = ""; // Limpa o campo de entrada
+    } else {
+        alert("Por favor, digite uma mensagem.");
+    }
+}
