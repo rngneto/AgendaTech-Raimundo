@@ -729,71 +729,106 @@ button[type="button"]:hover {
     background-color: #c0392b;
 }
 
-/* Estilos para o Card de Busca */
-.search-card {
-    position: absolute;
-    top: 100px; /* Distância do topo */
-    left: 2px; /* Distância da lateral esquerda */
-    background-color: #f0f0f0; /* Cinza claro */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
+/* Contêiner principal da barra de busca */
+.search-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 250px;
-    opacity: 1; /* Inicialmente visível */
-    transition: opacity 0.3s ease; /* Transição suave para aparecer/desaparecer */
-    z-index: 1000; /* Para garantir que o card fique acima dos outros elementos */
+    /* Centraliza verticalmente */
+    padding: 5px 8px;
+    /* Espaçamento interno */
+    border: 1px solid #ccc;
+    /* Borda leve */
+    border-radius: 8px;
+    /* Bordas arredondadas */
+    background-color: #f0f0f0;
+    /* Fundo cinza claro */
+    width: 200px;
+    /* Largura ajustada */
+    max-width: 90%;
+    /* Responsivo: Nunca ultrapassa 90% da largura */
+    position: absolute;
+    /* Movemos para a posição absoluta */
+    top: 85px;
+    /* Distância do topo da tela */
+    left: 10px;
+    /* Totalmente à esquerda da tela */
+    z-index: 1000;
+    /* Para garantir que esteja acima de outros elementos */
 }
 
 /* Ícone da lupa */
 .search-icon img {
-    width: 25px;
-    height: 25px;
+    width: 18px;
+    /* Tamanho reduzido da lupa */
+    height: 18px;
+    margin-right: 8px;
+    /* Espaço entre a lupa e o campo */
 }
 
-/* Input de busca */
-.search-input input {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+/* Campo de busca */
+#search-input {
+    flex: 1;
+    /* O campo ocupa o espaço restante */
+    border: none;
     outline: none;
+    /* Remove contorno padrão ao focar */
+    background-color: transparent;
+    /* Fundo transparente */
+    font-size: 12px;
+    /* Texto menor */
+    color: #333;
 }
 
-/* Estilo do botão Enter */
+/* Botão "Procurar" */
 .search-button {
-    padding: 8px 15px;
-    font-size: 14px;
-    background-color: #0073e6;
+    background-color: #007bff;
+    /* Azul padrão */
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
+    padding: 4px 6px;
+    /* Botão menor */
+    font-size: 10px;
+    /* Texto menor */
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 .search-button:hover {
-    background-color: #005bb5;
+    background-color: #0056b3;
+    /* Azul mais escuro no hover */
 }
 
-.search-button:focus {
-    outline: none;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Estilos para os Atalhos */
 .shortcuts-container {
     position: absolute;
-    top: 200px; /* Distância do topo em relação ao card de busca */
-    left: 2px; /* Mesma distância da lateral esquerda */
+    top: 200px;
+    /* Distância do topo em relação ao card de busca */
+    left: 2px;
+    /* Mesma distância da lateral esquerda */
     padding: 10px;
-    background-color: #f0f0f0; /* Cinza claro */
+    background-color: #f0f0f0;
+    /* Cinza claro */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 250px;
-    z-index: 999; /* Garantir que fique abaixo do card de busca */
+    z-index: 999;
+    /* Garantir que fique abaixo do card de busca */
 }
 
 .shortcuts-container h3 {
@@ -829,15 +864,19 @@ button[type="button"]:hover {
 }
 
 .shortcut a:hover {
-    color: #007bff; /* Cor do link ao passar o mouse */
+    color: #007bff;
+    /* Cor do link ao passar o mouse */
 }
 
 /* Estilos para o Calendário */
 .calendar-container {
     position: absolute;
-    top: 100px; /* Distância abaixo do card de busca */
-    left: 1240px; /* Distância da lateral esquerda */
-    background-color: #f0f0f0; /* Cinza claro */
+    top: 100px;
+    /* Distância abaixo do card de busca */
+    left: 1240px;
+    /* Distância da lateral esquerda */
+    background-color: #f0f0f0;
+    /* Cinza claro */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;

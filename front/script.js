@@ -23,7 +23,7 @@ function registerUser() {
 }
 
 // Fechar o modal quando clicar fora dele
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById('login-modal');
     if (event.target === modal) {
         modal.style.display = "none";
@@ -103,7 +103,7 @@ function changePassword() {
     const currentPassword = document.getElementById('current-password').value;
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
-    
+
     if (newPassword === confirmPassword) {
         alert('Senha alterada com sucesso!');
     } else {
@@ -125,7 +125,7 @@ function closeEventRegistrationModal(event) {
 }
 
 // Função para enviar os dados do formulário de cadastro de eventos
-document.getElementById('event-registration-form').addEventListener('submit', async function(e) {
+document.getElementById('event-registration-form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const formData = {
@@ -153,46 +153,4 @@ document.getElementById('event-registration-form').addEventListener('submit', as
         console.error("Erro ao cadastrar evento:", error);
         alert("Erro ao cadastrar evento. Tente novamente.");
     }
-});
-
-// Função para buscar eventos
-async function searchEvent() {
-    const searchTerm = document.getElementById('search-event').value;
-
-    if (searchTerm) {
-        const response = await fetch(`/api/search-events/?q=${searchTerm}`);
-        const results = await response.json();
-
-        if (results.length > 0) {
-            console.log("Eventos encontrados:", results);
-        } else {
-            console.log("Nenhum evento encontrado.");
-        }
-    } else {
-        console.log("Digite algo para buscar.");
-    }
-}
-
-// Obtém o card de busca
-const searchCard = document.querySelector('.search-card');
-
-// Função para controlar a visibilidade do card ao rolar
-window.addEventListener('scroll', function() {
-    if (window.scrollY > 100) {
-        searchCard.style.opacity = '0';
-    } else {
-        searchCard.style.opacity = '1';
-    }
-});
-
-// Inicializa o FullCalendar com eventos do backend
-document.addEventListener('DOMContentLoaded', function() {
-    const calendarEl = document.getElementById('calendar');
-
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: '/api/list-events/' // Carrega eventos da API do backend
-    });
-
-    calendar.render();
 });

@@ -17,25 +17,10 @@
 
 <script src="script.js"></script>
 
+
+
+
 <body>
-    <!-- Card de Busca -->
-    <div class="search-card">
-        <div class="search-icon">
-            <img src="images/search-icon.png" alt="Buscar evento">
-        </div>
-        <div class="search-input">
-            <input type="text" id="search-input" placeholder="Buscar evento..." />
-        </div>
-        <button class="search-button">Buscar</button>
-    </div>
-
-    <!-- Calendário -->
-    <div id="calendar-container" class="calendar-container">
-        <div id="calendar"></div>
-    </div>
-
-
-
 
     <!-- Barra de navegação -->
     <div class="navbar">
@@ -168,7 +153,8 @@
                 <p><strong>Atividades Extracurriculares:</strong> Monitor de Algoritmos, Membro do Clube de Programação
                 </p>
                 <p><strong>Link do Lattes:</strong> <a href="https://lattes.cnpq.br/1234567890123456"
-                        target="_blank">Lattes - Crestfallen Warrior</a></p>
+                        target="_blank">Lattes
+                        - Crestfallen Warrior</a></p>
             </div>
 
             <button onclick="closeProfileModal()">Fechar</button>
@@ -295,17 +281,19 @@
         </div>
     </div>
 
-    <!-- Card de Busca de Evento -->
-    <div class="search-card">
+    <div class="search-bar">
+        <!-- Lupa -->
         <div class="search-icon">
-            <img src="images/lupa.png" alt="Buscar Evento" />
+            <img src="images/lupa.png" alt="Lupa">
         </div>
-        <div class="search-input">
-            <input type="text" placeholder="Buscar evento..." id="search-event" />
-        </div>
-        <button class="search-button" onclick="searchEvent()">Enter</button>
-    </div>
 
+        <!-- Campo de busca -->
+        <input type="text" id="search-input" placeholder="Buscar eventos" />
+
+        <!-- Botão "Procurar" -->
+        <button id="search-button" class="search-button">Procurar</button>
+    </div>
+    
     <div class="container">
         <!-- Cards de Eventos -->
         <div class="card"
