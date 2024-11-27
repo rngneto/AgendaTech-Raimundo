@@ -144,6 +144,9 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-align: center;
     cursor: pointer;
+
+    /* Adicionado: margem superior */
+    margin-top: 10px;
 }
 
 .card:hover {
@@ -328,9 +331,6 @@ body {
     background-color: #005bb5;
 }
 
-
-
-
 /* Estilos gerais para a barra de navegação */
 .navbar {
     width: 100%;
@@ -340,30 +340,37 @@ body {
     align-items: center;
     padding: 10px;
     box-sizing: border-box;
+
+    /* Alteração: Sombra sutil */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Alinhamento da barra de navegação à esquerda (ícone de agenda) */
 .navbar-left img {
     width: 75px;
     height: auto;
-    cursor: pointer;
+    cursor: help; /* Alteração: Cursor de ajuda */
 }
 
 /* Alinhamento da barra de navegação ao centro (links) */
-.navbar-center {
-    display: flex;
-    justify-content: center;
-    flex-grow: 1;
-}
-
 .navbar-center a {
     color: white;
     text-decoration: none;
     margin: 0 15px;
     font-size: 16px;
     font-weight: bold;
-    transition: color 0.3s ease;
+    padding: 5px 10px; /* Adiciona espaço interno para parecer botões */
+    border: 1px solid white; /* Contorno branco */
+    border-radius: 4px; /* Bordas arredondadas */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+.navbar-center a:hover {
+    color: #f39c12;
+    background-color: white; /* Fundo branco no hover */
+    border-color: #f39c12; /* Contorno laranja no hover */
+}
+
 
 .navbar-center a:hover {
     color: #f39c12;
@@ -517,19 +524,6 @@ button:hover {
 
 .view-details-button:hover {
     background-color: #45a049;
-}
-
-// Função para exibir o modal de Perfil
-function showProfile() {
-    const profileModal=document.getElementById('profile-modal');
-    profileModal.style.display='flex'; // Exibe o modal no centro da tela
-}
-
-// Função para fechar o modal de Perfil
-function closeProfileModal(event) {
-    if (event.target===document.getElementById('profile-modal') || event.target.tagName==='BUTTON') {
-        document.getElementById('profile-modal').style.display='none';
-    }
 }
 
 /* Estilos para o modal de perfil */
@@ -729,163 +723,103 @@ button[type="button"]:hover {
     background-color: #c0392b;
 }
 
+
 /* Contêiner principal da barra de busca */
 .search-bar {
     display: flex;
     align-items: center;
-    /* Centraliza verticalmente */
-    padding: 5px 8px;
-    /* Espaçamento interno */
+    padding: 5px;
     border: 1px solid #ccc;
-    /* Borda leve */
     border-radius: 8px;
-    /* Bordas arredondadas */
     background-color: #f0f0f0;
-    /* Fundo cinza claro */
-    width: 200px;
-    /* Largura ajustada */
-    max-width: 90%;
-    /* Responsivo: Nunca ultrapassa 90% da largura */
+    width: 240px; /* Aumentei a largura para evitar cortes */
+    max-width: 90%; /* Responsivo */
     position: absolute;
-    /* Movemos para a posição absoluta */
     top: 85px;
-    /* Distância do topo da tela */
     left: 10px;
-    /* Totalmente à esquerda da tela */
     z-index: 1000;
-    /* Para garantir que esteja acima de outros elementos */
 }
 
 /* Ícone da lupa */
 .search-icon img {
-    width: 18px;
-    /* Tamanho reduzido da lupa */
+    width: 18px; /* Tamanho da lupa */
     height: 18px;
-    margin-right: 8px;
-    /* Espaço entre a lupa e o campo */
+    margin-right: 5px; /* Espaço entre a lupa e o campo */
 }
 
 /* Campo de busca */
 #search-input {
-    flex: 1;
-    /* O campo ocupa o espaço restante */
+    flex: 1; /* O campo ocupa o espaço restante */
     border: none;
-    outline: none;
-    /* Remove contorno padrão ao focar */
-    background-color: transparent;
-    /* Fundo transparente */
+    outline: none; /* Remove contorno padrão */
+    background-color: transparent; /* Fundo transparente */
     font-size: 12px;
-    /* Texto menor */
     color: #333;
+    padding: 0;
 }
 
 /* Botão "Procurar" */
 .search-button {
     background-color: #007bff;
-    /* Azul padrão */
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 4px 6px;
-    /* Botão menor */
-    font-size: 10px;
-    /* Texto menor */
+    padding: 4px 6px; /* Botão menor */
+    font-size: 10px; /* Texto menor */
     cursor: pointer;
     transition: background-color 0.3s ease;
+    white-space: nowrap; /* Impede que o texto do botão quebre */
 }
 
 .search-button:hover {
     background-color: #0056b3;
-    /* Azul mais escuro no hover */
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Estilos para os Atalhos */
-.shortcuts-container {
-    position: absolute;
-    top: 200px;
-    /* Distância do topo em relação ao card de busca */
-    left: 2px;
-    /* Mesma distância da lateral esquerda */
-    padding: 10px;
-    background-color: #f0f0f0;
-    /* Cinza claro */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 250px;
-    z-index: 999;
-    /* Garantir que fique abaixo do card de busca */
-}
-
-.shortcuts-container h3 {
-    margin-bottom: 20px;
-    font-size: 18px;
-    text-align: center;
-}
-
-.shortcut {
+/* Footer principal */
+.footer {
+    width: 100%;
+    background-color: #333; /* Fundo igual ao header */
+    color: white;
+    padding: 20px 10px;
+    box-sizing: border-box;
     display: flex;
+    flex-direction: column; /* Alinha colunas e botão verticalmente */
     align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
 }
 
-.shortcut img {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-}
-
-.shortcut span {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.shortcut a {
+/* Contêiner das colunas */
+.footer-container {
     display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #333;
-    transition: color 0.3s ease;
+    justify-content: space-between; /* Espaça as colunas horizontalmente */
+    max-width: 1200px;
+    width: 100%;
 }
 
-.shortcut a:hover {
-    color: #007bff;
-    /* Cor do link ao passar o mouse */
+.footer-column {
+    flex: 1;
+    padding: 0 10px;
 }
 
-/* Estilos para o Calendário */
-.calendar-container {
-    position: absolute;
-    top: 100px;
-    /* Distância abaixo do card de busca */
-    left: 1240px;
-    /* Distância da lateral esquerda */
-    background-color: #f0f0f0;
-    /* Cinza claro */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    width: 250px;
-    z-index: 1000;
+.footer-title {
+    font-size: 16px;
+    color: #f39c12; /* Destaque em laranja */
+    margin-bottom: 10px;
 }
 
-/* Garantir que o calendário tenha altura e estilo correto */
-#calendar {
-    max-height: 300px;
-    overflow-y: auto;
+.footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-list li {
+    margin: 5px 0;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease; /* Suaviza transformações e mudanças de cor */
+}
+
+.footer-list li:hover {
+    color: #f39c12; /* Altera a cor para laranja ao passar o mouse */
+    transform: translateX(5px); /* Move o item ligeiramente para a direita */
 }
