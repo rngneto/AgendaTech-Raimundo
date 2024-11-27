@@ -349,7 +349,8 @@ body {
 .navbar-left img {
     width: 75px;
     height: auto;
-    cursor: help; /* Cursor de ajuda */
+    cursor: help;
+    /* Cursor de ajuda */
 }
 
 /* Alinhamento da barra de navegação ao centro (links) */
@@ -358,20 +359,26 @@ body {
     text-decoration: none;
 
     /* Reduzido o espaçamento horizontal */
-    margin: 0 10px; /* Antes era 15px */
+    margin: 0 10px;
+    /* Antes era 15px */
 
     font-size: 16px;
     font-weight: bold;
-    padding: 5px 10px; /* Espaçamento interno para parecer botões */
-    border: 1px solid white; /* Contorno branco */
-    border-radius: 4px; /* Bordas arredondadas */
+    padding: 5px 10px;
+    /* Espaçamento interno para parecer botões */
+    border: 1px solid white;
+    /* Contorno branco */
+    border-radius: 4px;
+    /* Bordas arredondadas */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .navbar-center a:hover {
     color: #f39c12;
-    background-color: white; /* Fundo branco no hover */
-    border-color: #f39c12; /* Contorno laranja no hover */
+    background-color: white;
+    /* Fundo branco no hover */
+    border-color: #f39c12;
+    /* Contorno laranja no hover */
 }
 
 /* Alinhamento da barra de navegação à direita (ícone de usuário) */
@@ -830,7 +837,8 @@ button[type="button"]:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     padding: 15px;
     z-index: 1000;
-    display: none; /* Inicialmente escondido */
+    display: none;
+    /* Inicialmente escondido */
 }
 
 .city-modal h3 {
@@ -889,8 +897,6 @@ button[type="button"]:hover {
     display: block;
 }
 
-
-
 /* Footer principal */
 .footer {
     width: 100%;
@@ -946,17 +952,14 @@ button[type="button"]:hover {
     /* Move o item ligeiramente para a direita */
 }
 
-
-
-
-
-
-
 /* Estilo geral do post-it */
 .post-it {
-    position: fixed; /* Fixado inicialmente */
-    top: 100px; /* Distância do topo */
-    right: 20px; /* Alinhado à direita */
+    position: fixed;
+    /* Fixado inicialmente */
+    top: 100px;
+    /* Distância do topo */
+    right: 20px;
+    /* Alinhado à direita */
     width: 180px;
     min-height: 150px;
     background-color: #fffad1;
@@ -1016,18 +1019,99 @@ button[type="button"]:hover {
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
     .post-it {
-        position: relative; /* Deixa de ser fixo */
-        margin: 20px auto; /* Centraliza na tela */
-        top: unset; /* Remove distância do topo */
-        right: unset; /* Remove alinhamento à direita */
-        transform: rotate(0deg); /* Remove a inclinação */
-        width: 100%; /* Ocupa toda a largura disponível */
-        max-width: 300px; /* Limita a largura em telas menores */
+        position: relative;
+        /* Deixa de ser fixo */
+        margin: 20px auto;
+        /* Centraliza na tela */
+        top: unset;
+        /* Remove distância do topo */
+        right: unset;
+        /* Remove alinhamento à direita */
+        transform: rotate(0deg);
+        /* Remove a inclinação */
+        width: 100%;
+        /* Ocupa toda a largura disponível */
+        max-width: 300px;
+        /* Limita a largura em telas menores */
     }
 }
 
 @media (max-width: 480px) {
     .post-it {
-        margin-top: 10px; /* Dá mais espaço no topo em telas muito pequenas */
+        margin-top: 10px;
+        /* Dá mais espaço no topo em telas muito pequenas */
     }
+}
+
+/* Contêiner principal dos filtros */
+.filter-section {
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+}
+
+.filter-section h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Cada item de filtro */
+.filter-item {
+    position: relative;
+    display: inline-block;
+    margin-right: 15px;
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-item:hover {
+    background-color: #f1f1f1;
+}
+
+/* Dropdown (modal) de cada filtro */
+.filter-modal {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 200px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 1000;
+    display: none;
+}
+
+.filter-modal.hidden {
+    display: none;
+}
+
+.filter-modal ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.filter-modal ul li {
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-modal ul li:hover {
+    background-color: #f1f1f1;
+    color: #0073e6;
+}
+
+.filter-modal input[type="date"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
 }

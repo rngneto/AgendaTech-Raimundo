@@ -233,7 +233,6 @@
         </div>
     </div>
 
-
     <!-- Modal de Login -->
     <div class="modal" id="login-modal">
         <div class="modal-content">
@@ -295,8 +294,8 @@
         <!-- Lupa -->
         <div class="search-icon">
             <img src="images/lupa.png" alt="Lupa">
-        </div>        
-        <!-- Busca de Eventos -->        
+        </div>
+        <!-- Busca de Eventos -->
         <input type="text" id="search-input" placeholder="Buscar eventos" />
 
         <!-- Botão "Procurar" -->
@@ -304,35 +303,34 @@
     </div>
 
     <!-- Área de Cidade -->
-<div class="city-area">
-    <div class="city-header" onclick="toggleCityModal()">
-        <img src="images/location-icon.png" alt="Ícone de localização" class="location-icon">
-        <span class="current-city">Teresina</span> <!-- Cidade atual -->
+    <div class="city-area">
+        <div class="city-header" onclick="toggleCityModal()">
+            <img src="images/location-icon.png" alt="Ícone de localização" class="location-icon">
+            <span class="current-city">Teresina</span> <!-- Cidade atual -->
+        </div>
+
+        <!-- Modal de Seleção de Cidade -->
+        <div id="city-modal" class="city-modal hidden">
+            <h3>Selecione sua cidade</h3>
+            <button class="location-button" onclick="useCurrentLocation()">Usar minha localização atual</button>
+            <p class="location-description">Encontre eventos perto de você</p>
+
+            <!-- Lista de Cidades -->
+            <ul class="city-list">
+                <li>Teresina</li>
+                <li>Fortaleza</li>
+                <li>Salvador</li>
+                <li>Recife</li>
+                <li>São Luís</li>
+                <li>Natal</li>
+                <li>Maceió</li>
+                <li>Aracaju</li>
+                <li>João Pessoa</li>
+                <li>São Paulo</li>
+                <li>Rio de Janeiro</li>
+            </ul>
+        </div>
     </div>
-
-    <!-- Modal de Seleção de Cidade -->
-    <div id="city-modal" class="city-modal hidden">
-        <h3>Selecione sua cidade</h3>
-        <button class="location-button" onclick="useCurrentLocation()">Usar minha localização atual</button>
-        <p class="location-description">Encontre eventos perto de você</p>
-
-        <!-- Lista de Cidades -->
-        <ul class="city-list">
-            <li>Teresina</li>
-            <li>Fortaleza</li>
-            <li>Salvador</li>
-            <li>Recife</li>
-            <li>São Luís</li>
-            <li>Natal</li>
-            <li>Maceió</li>
-            <li>Aracaju</li>
-            <li>João Pessoa</li>
-            <li>São Paulo</li>
-            <li>Rio de Janeiro</li>
-        </ul>
-    </div>
-</div>
-
 
     <div class="container">
         <!-- Cards de Eventos -->
@@ -408,6 +406,63 @@
             <p><strong>Palestrante:</strong> <span id="modalSpeaker"></span></p>
             <p><strong>Descrição:</strong> <span id="modalDescription"></span></p>
             <button onclick="closeModal()">Fechar</button>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <h3>Filtrar por</h3>
+
+        <!-- Filtro por Categoria -->
+        <div class="filter-item" onclick="toggleCategoryModal()">
+            <span>Categoria</span>
+        </div>
+        <div id="category-modal" class="filter-modal hidden">
+            <ul>
+                <li>Games e Geek</li>
+                <li>Cursos</li>
+                <li>Workshops</li>
+                <li>Palestras</li>
+            </ul>
+        </div>
+
+        <!-- Filtro por Data -->
+        <div class="filter-item" onclick="toggleDateModal()">
+            <span>Data</span>
+        </div>
+        <div id="date-modal" class="filter-modal hidden">
+            <ul>
+                <li>Hoje</li>
+                <li>Amanhã</li>
+                <li>Esta semana</li>
+                <li>Próxima semana</li>
+                <li>Este mês</li>
+                <li>Próximo mês</li>
+                <li><input type="date" id="custom-date"></li>
+            </ul>
+        </div>
+
+        <!-- Filtro por Preço -->
+        <div class="filter-item" onclick="togglePriceModal()">
+            <span>Preço</span>
+        </div>
+        <div id="price-modal" class="filter-modal hidden">
+            <ul>
+                <li>Grátis</li>
+                <li>Pago</li>
+                <li>Qualquer preço</li>
+            </ul>
+        </div>
+
+        <!-- Filtro por Tipo de Evento -->
+        <div class="filter-item" onclick="toggleTypeModal()">
+            <span>Tipo de Evento</span>
+        </div>
+        <div id="type-modal" class="filter-modal hidden">
+            <ul>
+                <li>Presencial</li>
+                <li>Online</li>
+                <li>Semi-presencial</li>
+            </ul>
         </div>
     </div>
 
@@ -487,8 +542,6 @@
         </div>
     </div>
     </div>
-
-
 
     <!-- Seção "Seus Certificados" -->
     <div class="certificates-container">

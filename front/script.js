@@ -166,3 +166,28 @@ function toggleCityModal() {
 function useCurrentLocation() {
     alert("Usando sua localização atual!");
 }
+
+// Filtro por Categoria
+function toggleCategoryModal() {
+    const modal = document.getElementById("category-modal");
+    modal.classList.toggle("hidden");
+}
+
+// Filtro por Data
+function toggleDateModal() {
+    const modal = document.getElementById("date-modal");
+    modal.classList.toggle("hidden");
+}
+
+// Filtro por Preço
+function togglePriceModal() {
+    const modal = document.getElementById("price-modal");
+    modal.classList.toggle("hidden");
+}
+
+// Filtro por Tipo de Evento
+function toggleTypeModal() {
+    const modal = document.getElementById("type-modal");
+    modal.classList.toggle("hidden");
+}
+
