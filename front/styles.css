@@ -783,6 +783,113 @@ button[type="button"]:hover {
     background-color: #0056b3;
 }
 
+/* Estilo da área de cidade */
+.city-area {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.city-header {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.city-header:hover {
+    background-color: #eaeaea;
+}
+
+.location-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.current-city {
+    font-weight: bold;
+    color: #0073e6;
+}
+
+/* Modal de seleção de cidade */
+.city-modal {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 250px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    z-index: 1000;
+    display: none; /* Inicialmente escondido */
+}
+
+.city-modal h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.location-button {
+    width: 100%;
+    padding: 8px;
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.location-button:hover {
+    background-color: #005bb5;
+}
+
+.location-description {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.city-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.city-list li {
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.city-list li:hover {
+    background-color: #f1f1f1;
+    color: #0073e6;
+}
+
+/* Classe para mostrar o modal */
+.city-modal.hidden {
+    display: none;
+}
+
+.city-modal.visible {
+    display: block;
+}
+
+
 
 /* Footer principal */
 .footer {

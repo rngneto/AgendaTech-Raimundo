@@ -17,9 +17,6 @@
 
 <script src="script.js"></script>
 
-
-
-
 <body>
 
     <!-- Barra de navegação -->
@@ -298,14 +295,44 @@
         <!-- Lupa -->
         <div class="search-icon">
             <img src="images/lupa.png" alt="Lupa">
-        </div>
-
-        <!-- Campo de busca -->
+        </div>        
+        <!-- Busca de Eventos -->        
         <input type="text" id="search-input" placeholder="Buscar eventos" />
 
         <!-- Botão "Procurar" -->
         <button id="search-button" class="search-button">Procurar</button>
     </div>
+
+    <!-- Área de Cidade -->
+<div class="city-area">
+    <div class="city-header" onclick="toggleCityModal()">
+        <img src="images/location-icon.png" alt="Ícone de localização" class="location-icon">
+        <span class="current-city">Teresina</span> <!-- Cidade atual -->
+    </div>
+
+    <!-- Modal de Seleção de Cidade -->
+    <div id="city-modal" class="city-modal hidden">
+        <h3>Selecione sua cidade</h3>
+        <button class="location-button" onclick="useCurrentLocation()">Usar minha localização atual</button>
+        <p class="location-description">Encontre eventos perto de você</p>
+
+        <!-- Lista de Cidades -->
+        <ul class="city-list">
+            <li>Teresina</li>
+            <li>Fortaleza</li>
+            <li>Salvador</li>
+            <li>Recife</li>
+            <li>São Luís</li>
+            <li>Natal</li>
+            <li>Maceió</li>
+            <li>Aracaju</li>
+            <li>João Pessoa</li>
+            <li>São Paulo</li>
+            <li>Rio de Janeiro</li>
+        </ul>
+    </div>
+</div>
+
 
     <div class="container">
         <!-- Cards de Eventos -->

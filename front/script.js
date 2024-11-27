@@ -154,3 +154,15 @@ document.getElementById('event-registration-form').addEventListener('submit', as
         alert("Erro ao cadastrar evento. Tente novamente.");
     }
 });
+
+// Alterna a visibilidade do modal de cidades
+function toggleCityModal() {
+    const modal = document.getElementById("city-modal");
+    modal.classList.toggle("hidden");
+    modal.classList.toggle("visible");
+}
+
+// Simula o uso da localização atual
+function useCurrentLocation() {
+    alert("Usando sua localização atual!");
+}
