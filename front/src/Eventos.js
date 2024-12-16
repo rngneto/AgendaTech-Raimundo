@@ -7,6 +7,25 @@ const Eventos = () => {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const eventosPorPagina = 12; // Alterado para exibir 12 eventos por página
 
+  useEffect(() => {
+    const carregarEventos = async () => {
+      try {
+        // Faz a requisição ao backend
+        const resposta = await fetch(`http://localhost:8000/api/listar_eventos?page=${paginaAtual}`);
+        const dados = await resposta.json();
+
+        // Atualiza os estados com os dados do backend
+        setEventos(dados.eventos || []);
+        setTotalPaginas(dados.total_paginas || 1);
+      } catch (erro) {
+        console.error('Erro ao carregar eventos:', erro);
+        setEventos([]); // Caso ocorra erro, limpa os eventos
+      }
+    };
+
+    carregarEventos();
+  }, [paginaAtual]);
+
   const mudarPagina = (novaPagina) => {
     if (novaPagina > 0 && novaPagina <= totalPaginas) {
       setPaginaAtual(novaPagina);
