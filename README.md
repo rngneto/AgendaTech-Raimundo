@@ -73,7 +73,7 @@ cd ~  # Ou substitua pelo caminho desejado
 ```
 `9.` Clone o repositório:
 ```
-git clone https://github.com/rngneto/AgendaTech.git
+git clone https://github.com/ES2-UFPI/AgendaTech
 ```
 `10.` Navegue até a pasta do projeto:
 ```
@@ -146,7 +146,7 @@ cd C:\caminho\do\projeto
 ```
 `5.` Clone o repositório:
 ```
-git clone https://github.com/rngneto/AgendaTech.git
+git clone https://github.com/ES2-UFPI/AgendaTech
 ```
 `6.` Navegue até a pasta do back-end:
 ```
