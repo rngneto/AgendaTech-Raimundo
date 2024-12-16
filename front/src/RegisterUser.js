@@ -9,6 +9,25 @@ function RegisterUser() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/cadastrar_usuario/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setMessage(`Usuário ${data.nome} cadastrado com sucesso!`);
+      } else {
+        setMessage('Erro ao cadastrar o usuário.');
+      }
+    } catch (error) {
+      setMessage('Erro de conexão com o backend.');
+    }
+  };
+
   return (
     <div className="register-container">
       <h2>Cadastro de Usuário</h2>
