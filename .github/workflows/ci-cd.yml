@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+      - ci-cd
+  pull_request:
+    branches:
+      - dev
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout do repositório
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Configurar Python para o Backend
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12
+
+    - name: Install backend dependencies
+      run: |
+        cd back
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Run backend migrations and tests
+      run: |
+        cd back
+        source venv/bin/activate
+        python manage.py makemigrations
+        python manage.py migrate
+        python manage.py test
+
+    # Configurar Node.js para o Frontend
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install frontend dependencies
+      run: |
+        cd front
+        npm install
+        npm install react-router-dom
+
+
