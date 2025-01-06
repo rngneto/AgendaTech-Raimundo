@@ -51,6 +51,7 @@ jobs:
       run: |
         cd front
         npm install
+        npm install react-router-dom
 
     - name: Run frontend tests
       run: |
