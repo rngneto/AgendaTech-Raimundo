@@ -1,0 +1,39 @@
+.dead-link-container {
+    text-align: center;
+    padding: 50px;
+    background-color: #f8f9fa;
+    color: #343a40;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .dead-link-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .dead-link-container h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #dc3545;
+  }
+  
+  .dead-link-image {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+  }
+  
+  .dead-link-container p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+  }
+  
+  .home-link {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .home-link:hover {
+    text-decoration: underline;
+  }
+  
