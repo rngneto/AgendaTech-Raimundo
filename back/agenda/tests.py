@@ -29,7 +29,7 @@ class UsuarioTests(TestCase):
         }
         response = self.client.post(
             reverse('cadastrar_usuario'),
-            json.dumps(data),
+            data=json.dumps(data),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 201)
@@ -68,13 +68,17 @@ class EventoTests(TestCase):
         data = {
             "nome": "Curso Django",
             "data": "2025-02-01",
-            "horario": "15:00",
+            "horario": "15:00:00",
             "tipo": "online",
             "local": "Zoom",
             "link": "https://zoom.com/meeting",
             "descricao": "Curso intensivo de Django"
         }
-        response = self.client.post(reverse('cadastrar_evento'), data)
+        response = self.client.post(
+            reverse('cadastrar_evento'),
+            data=json.dumps(data),
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
 
