@@ -11,6 +11,7 @@ class UsuarioTests(TestCase):
         self.usuario = Usuario.objects.create(
             nome="João",
             sobrenome="Silva",
+            username="joaosilva",
             senha="senha123"
         )
 
@@ -18,6 +19,7 @@ class UsuarioTests(TestCase):
         """Testa a criação de um usuário"""
         self.assertEqual(self.usuario.nome, "João")
         self.assertEqual(self.usuario.sobrenome, "Silva")
+        self.assertEqual(self.usuario.username, "joaosilva")
         self.assertEqual(str(self.usuario), "João Silva")
 
     def test_cadastrar_usuario_view(self):
@@ -25,6 +27,7 @@ class UsuarioTests(TestCase):
         data = {
             "nome": "Maria",
             "sobrenome": "Santos",
+            "username": "mariasantos",
             "senha": "senha456"
         }
         response = self.client.post(
@@ -33,7 +36,23 @@ class UsuarioTests(TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 201)
-        self.assertTrue(Usuario.objects.filter(nome="Maria").exists())
+        self.assertTrue(Usuario.objects.filter(username="mariasantos").exists())
+
+    def test_cadastrar_usuario_com_username_repetido(self):
+        """Testa o cadastro de usuário com username duplicado"""
+        data = {
+            "nome": "Carlos",
+            "sobrenome": "Almeida",
+            "username": "joaosilva",  # Username já existente
+            "senha": "senha789"
+        }
+        response = self.client.post(
+            reverse('cadastrar_usuario'),
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("username", response.json())
 
     def test_listar_usuarios_view(self):
         """Testa o endpoint de listagem de usuários"""
@@ -42,6 +61,7 @@ class UsuarioTests(TestCase):
         usuarios = json.loads(response.content)
         self.assertEqual(len(usuarios), 1)
         self.assertEqual(usuarios[0]['nome'], "João")
+
 
 class EventoTests(TestCase):
     def setUp(self):
