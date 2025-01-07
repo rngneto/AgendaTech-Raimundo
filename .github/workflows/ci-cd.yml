@@ -5,7 +5,7 @@ on:
     branches:
       - dev
       - master
-      - ci-cd
+      - dev2
   pull_request:
     branches:
       - dev
@@ -14,6 +14,13 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
+    services:
+      # Add SQLite service if needed
+      sqlite3:
+        image: nouchka/sqlite3:latest
+        ports:
+          - 5432:5432
 
     steps:
     # Checkout do repositório
@@ -26,20 +33,46 @@ jobs:
       with:
         python-version: 3.12
 
+    # Cache de dependências do Python
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
     - name: Install backend dependencies
       run: |
         cd back
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
+        pip install coverage  # Para relatórios de cobertura de testes
 
-    - name: Run backend migrations and tests
+    - name: Run backend migrations
       run: |
         cd back
         source venv/bin/activate
         python manage.py makemigrations
         python manage.py migrate
-        python manage.py test
+
+    - name: Run backend tests with coverage
+      run: |
+        cd back
+        source venv/bin/activate
+        coverage run manage.py test
+        coverage report
+        coverage xml
+
+    # Upload do relatório de cobertura
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./back/coverage.xml
+        flags: backend
+        name: backend-coverage
+        fail_ci_if_error: true
 
     # Configurar Node.js para o Frontend
     - name: Set up Node.js
@@ -47,10 +80,23 @@ jobs:
       with:
         node-version: 18
 
+    # Cache de dependências do Node
+    - name: Cache Node dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
     - name: Install frontend dependencies
       run: |
         cd front
         npm install
         npm install react-router-dom
 
-
+    # Adicionar testes do frontend se necessário
+    - name: Run frontend tests
+      run: |
+        cd front
+        npm test -- --passWithNoTests  # Permite passar mesmo sem testes
