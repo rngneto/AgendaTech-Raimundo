@@ -1,17 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import agendaIcon from './assets/agenda.png';
-import userIcon from './assets/user-icon.png';
 import searchIcon from './assets/lupa.png';
+import UserDropdown from './UserDropdown';
 
 function Navbar({ usuarioLogado, setUsuarioLogado, handleLogout }) {
-  const [menuVisible, setMenuVisible] = useState(false);
-
-  const toggleUserMenu = () => {
-    setMenuVisible(!menuVisible);
-  };
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -32,34 +26,28 @@ function Navbar({ usuarioLogado, setUsuarioLogado, handleLogout }) {
         </div>
       </div>
 
-      {/* Links principais no centro */}
-      <div className="navbar-center">
-        <Link to="/create-event" className="nav-link">Criar Evento</Link>       
-      </div>
-
       {/* Área de usuário */}
       <div className="navbar-right">
         {!usuarioLogado ? (
-          <button 
-            className="register-btn" 
-            onClick={() => window.location.href = '/register'}
-          >
-            Cadastre-se
-          </button>
+          <>
+            <button 
+              className="btn btn-primary me-2" 
+              onClick={() => window.location.href = '/register'}
+            >
+              Cadastre-se
+            </button>
+            <button 
+              className="btn btn-secondary" 
+              onClick={() => window.location.href = '/login'}
+            >
+              Acesse sua conta
+            </button>
+          </>
         ) : (
-          <div className="user-area">
-            <img 
-              src={userIcon} 
-              alt="Usuário" 
-              id="user-icon" 
-              onClick={toggleUserMenu} 
-            />
-            <div className={`user-menu ${menuVisible ? '' : 'hidden'}`}>
-              <Link to="/meus-eventos" className="menu-link">Meus Eventos</Link>
-              <Link to="/minha-conta" className="menu-link">Minha Conta</Link>
-              <a href="#!" className="menu-link" onClick={handleLogout}>Sair</a>
-            </div>
-          </div>
+          <UserDropdown
+            usuarioLogado={usuarioLogado}
+            handleLogout={handleLogout}
+          />
         )}
       </div>
     </div>

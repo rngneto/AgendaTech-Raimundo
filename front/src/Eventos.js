@@ -1,30 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import './Eventos.css';
 
-const Eventos = () => {
+const Eventos = ({ filtro }) => {
   const [eventos, setEventos] = useState([]);
+  const [eventosFiltrados, setEventosFiltrados] = useState([]);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
-  const eventosPorPagina = 12; // Alterado para exibir 12 eventos por página
 
   useEffect(() => {
     const carregarEventos = async () => {
       try {
-        // Faz a requisição ao backend
         const resposta = await fetch(`http://localhost:8000/api/listar_eventos?page=${paginaAtual}`);
         const dados = await resposta.json();
 
-        // Atualiza os estados com os dados do backend
         setEventos(dados.eventos || []);
+        setEventosFiltrados(dados.eventos || []); // Inicialmente, exibe todos os eventos
         setTotalPaginas(dados.total_paginas || 1);
       } catch (erro) {
         console.error('Erro ao carregar eventos:', erro);
-        setEventos([]); // Caso ocorra erro, limpa os eventos
+        setEventos([]);
+        setEventosFiltrados([]);
       }
     };
 
     carregarEventos();
   }, [paginaAtual]);
+
+  // Atualiza a lista de eventos filtrados ao mudar o filtro
+  useEffect(() => {
+    if (filtro) {
+      let eventosAtualizados = eventos;
+
+      // Filtro por tipo
+      if (filtro.tipo) {
+        eventosAtualizados = eventosAtualizados.filter((evento) => evento.tipo === filtro.tipo);
+      }
+
+      // Filtro por data
+      if (filtro.data) {
+        const now = new Date();
+        if (filtro.data === 'semana') {
+          const semanaFim = new Date();
+          semanaFim.setDate(now.getDate() + 7);
+
+          eventosAtualizados = eventosAtualizados.filter((evento) => {
+            const eventoData = new Date(evento.data);
+            return eventoData >= now && eventoData <= semanaFim;
+          });
+        } else if (filtro.data === 'mes') {
+          const mesFim = new Date();
+          mesFim.setMonth(now.getMonth() + 1);
+
+          eventosAtualizados = eventosAtualizados.filter((evento) => {
+            const eventoData = new Date(evento.data);
+            return eventoData >= now && eventoData <= mesFim;
+          });
+        }
+      }
+
+      setEventosFiltrados(eventosAtualizados);
+    } else {
+      setEventosFiltrados(eventos);
+    }
+  }, [filtro, eventos]);
 
   const mudarPagina = (novaPagina) => {
     if (novaPagina > 0 && novaPagina <= totalPaginas) {
@@ -44,7 +82,7 @@ const Eventos = () => {
       <div className="album py-5 bg-body-tertiary">
         <div className="container">
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            {eventos.map((evento) => (
+            {eventosFiltrados.map((evento) => (
               <div className="col" key={evento.id}>
                 <div className="card shadow-sm evento-card">
                   {evento.imagem && (

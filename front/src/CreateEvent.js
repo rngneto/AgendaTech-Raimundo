@@ -12,6 +12,7 @@ function CreateEvent() {
     local: '',
     link: '',
     descricao: '',
+    preco: '',
     imagem: null,
   });
   const [imageSrc, setImageSrc] = useState(null);
@@ -89,6 +90,7 @@ function CreateEvent() {
           local: '',
           link: '',
           descricao: '',
+          preco: '',
           imagem: null,
         });
       } else {
@@ -189,10 +191,7 @@ function CreateEvent() {
               value={formData.link}
               onChange={handleChange}
             />
-          </div>
-          <div>
-
-          </div>
+          </div>        
           <div>
             <label>Descrição</label>
             <textarea
@@ -200,6 +199,16 @@ function CreateEvent() {
               value={formData.descricao}
               onChange={handleChange}
             ></textarea>
+          </div>
+          <div className="form-group">
+            <label>Preço:</label>
+            <input
+              type="number"
+              name="preco"
+              value={formData.preco}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <label>Imagem</label>

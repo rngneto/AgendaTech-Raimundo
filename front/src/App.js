@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar';
 import Eventos from './Eventos';
@@ -9,15 +9,38 @@ import Footer from './Footer';
 import ThemeToggle from './ThemeToggle';
 import CreateEvent from './CreateEvent';
 import DetalhesEvento from './DetalhesEvento';
+import HelpCenter from './HelpCenter';
+import DeadLink from './DeadLink';
+import MinhaConta from './MinhaConta';
+import LoginUser from './LoginUser';
+import Filter from './Filter'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './App.css';
 
 function App() {
   const [usuarioLogado, setUsuarioLogado] = useState(null);
+  const [filtro, setFiltro] = useState({}); // Estado para o filtro
+
+  useEffect(() => {
+    const usuario = localStorage.getItem('usuarioLogado');
+    if (usuario) {
+      setUsuarioLogado(JSON.parse(usuario));
+    }
+  }, []);
+
+  const handleLogin = (usuario) => {
+    setUsuarioLogado(usuario);
+    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+  };
 
   const handleLogout = () => {
-    setUsuarioLogado(null); // Limpa o estado ao deslogar
+    setUsuarioLogado(null);
+    localStorage.removeItem('usuarioLogado');
+  };
+
+  const handleFilterChange = (novoFiltro) => {
+    setFiltro(novoFiltro); // Atualiza o estado do filtro
   };
 
   return (
@@ -30,18 +53,25 @@ function App() {
         />
         
         {/* Define as rotas */}
-        <Routes>
-          {/* Página inicial mostrando eventos */}
-          <Route path="/" element={<Eventos />} />
-          {/* Página de cadastro de eventos */}
+        <Routes>          
+          <Route 
+            path="/" 
+            element={
+              <>
+                <Eventos filtro={filtro} /> {/* Exibindo eventos primeiro */}
+                <Filter onFilterChange={handleFilterChange} /> {/* Filtros abaixo dos eventos */}
+              </>
+            } 
+          />
           <Route path="/create-event" element={<CreateEvent />} />
-          <Route path="/eventos/:id" element={<DetalhesEvento />} />
-          {/* Página de cadastro de usuários */}
-          <Route path="/register" element={<RegisterUser setUsuarioLogado={setUsuarioLogado} />} />
-          {/* Página de usuários */}
+          <Route path="/eventos/:id" element={<DetalhesEvento />} />         
+          <Route path="/register" element={<RegisterUser setUsuarioLogado={handleLogin} />} />
+          <Route path="/login" element={<LoginUser setUsuarioLogado={handleLogin} />} />          
           <Route path="/usuarios" element={<UserList />} />
-          {/* Página de informaçãoes dos desenvolvedores */}
           <Route path="/about" element={<About />} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/minha-conta" element={<MinhaConta usuario={usuarioLogado} />} />
+          <Route path="*" element={<DeadLink />} />
         </Routes>
         
         {/* Componente Footer que será exibido em todas as páginas */}

@@ -1,54 +1,120 @@
+/* Container principal do formulário de registro */
 .register-container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Título do formulário */
+h2 {
+  margin-bottom: 20px;
+  color: #142f68;
+}
+
+/* Grupo de cada campo do formulário */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Estilo para os rótulos dos campos */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+/* Estilo para os campos de entrada */
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Estilo para o botão de envio */
+button {
+  background-color: #142f68;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #1a3a8f;
+}
+
+/* Mensagem de sucesso após o envio */
+.success-message {
+  margin-top: 15px;
+  color: green;
+  font-weight: bold;
+}
+
+/* Estilo para a área de recorte circular */
+.cropper-area {
+  width: 100%;
+  height: 200px; /* Altura proporcional */
+  position: relative;
+  background: #000;
+  border-radius: 50%; /* Faz a área de recorte ficar circular */
+  overflow: hidden;
+  border: 2px dashed #ccc; /* Adiciona um contorno para visualização clara */
+}
+
+/* Botões de ação no recorte */
+.cropper-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+/* Botões no recorte */
+.cropper-buttons button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cropper-buttons button:hover {
+  background-color: #0056b3;
+}
+
+/* Pré-visualização circular para a imagem do usuário */
+.user-profile-preview {
+  width: 100px; /* Aumenta o tamanho para visualização clara */
+  height: 100px;
+  border-radius: 50%; /* Faz a imagem final ficar circular */
+  object-fit: cover; /* Garante que a imagem preencha o círculo sem distorções */
+  border: 3px solid #142f68; /* Adiciona uma borda para destacar */
+  margin: 20px auto; /* Adiciona espaço ao redor da pré-visualização */
+  display: block;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .register-container {
+    padding: 15px;
   }
-  
-  h2 {
-    margin-bottom: 20px;
-    color: #142f68;
+
+  .cropper-area {
+    height: 150px; /* Ajusta a altura do recorte para telas menores */
   }
-  
-  .form-group {
-    margin-bottom: 15px;
-    text-align: left;
+
+  .user-profile-preview {
+    width: 80px;
+    height: 80px;
   }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  button {
-    background-color: #142f68;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  button:hover {
-    background-color: #1a3a8f;
-  }
-  
-  .success-message {
-    margin-top: 15px;
-    color: green;
-    font-weight: bold;
-  }
-  
+}
