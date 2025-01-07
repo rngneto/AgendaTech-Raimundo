@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar';
 import Eventos from './Eventos';
 import RegisterUser from './RegisterUser';
-import UserList from './UserList'; 
+import UserList from './UserList';
 import About from './About';
 import Footer from './Footer';
 import ThemeToggle from './ThemeToggle';
@@ -13,7 +13,8 @@ import HelpCenter from './HelpCenter';
 import DeadLink from './DeadLink';
 import MinhaConta from './MinhaConta';
 import LoginUser from './LoginUser';
-import Filter from './Filter'; 
+import Carrossel from './Carousel'; // Importa o componente Carrossel
+import Filter from './Filter';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './App.css';
@@ -51,30 +52,32 @@ function App() {
           setUsuarioLogado={setUsuarioLogado}
           handleLogout={handleLogout}
         />
-        
-        {/* Define as rotas */}
-        <Routes>          
-          <Route 
-            path="/" 
+
+        <Routes>
+          <Route
+            path="/"
             element={
               <>
-                <Eventos filtro={filtro} /> {/* Exibindo eventos primeiro */}
+                <Carrossel /> {/* Exibindo o carrossel na página inicial */}
+                <Eventos filtro={filtro} /> {/* Exibindo eventos */}
                 <Filter onFilterChange={handleFilterChange} /> {/* Filtros abaixo dos eventos */}
               </>
-            } 
+            }
           />
           <Route path="/create-event" element={<CreateEvent />} />
-          <Route path="/eventos/:id" element={<DetalhesEvento />} />         
-          <Route path="/register" element={<RegisterUser setUsuarioLogado={handleLogin} />} />
-          <Route path="/login" element={<LoginUser setUsuarioLogado={handleLogin} />} />          
+          <Route path="/eventos/:id" element={<DetalhesEvento />} />
+          <Route
+            path="/register"
+            element={<RegisterUser setUsuarioLogado={handleLogin} />}
+          />
+          <Route path="/login" element={<LoginUser setUsuarioLogado={handleLogin} />} />
           <Route path="/usuarios" element={<UserList />} />
           <Route path="/about" element={<About />} />
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/minha-conta" element={<MinhaConta usuario={usuarioLogado} />} />
           <Route path="*" element={<DeadLink />} />
         </Routes>
-        
-        {/* Componente Footer que será exibido em todas as páginas */}
+
         <Footer />
         <ThemeToggle />
       </div>
