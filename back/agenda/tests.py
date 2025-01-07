@@ -30,11 +30,15 @@ class UsuarioTests(TestCase):
             "username": "mariasantos",
             "senha": "senha456"
         }
-        response = self.client.post(
-            reverse('cadastrar_usuario'),
-            data=json.dumps(data),
-            content_type='application/json'
-        )
+        with open('test_image.jpg', 'rb') as img:
+            response = self.client.post(
+                reverse('cadastrar_usuario'),
+                data={
+                    **data,
+                    "imagem": img
+                },
+                format='multipart'
+            )
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Usuario.objects.filter(username="mariasantos").exists())
 
@@ -48,11 +52,12 @@ class UsuarioTests(TestCase):
         }
         response = self.client.post(
             reverse('cadastrar_usuario'),
-            data=json.dumps(data),
-            content_type='application/json'
+            data=data,
+            format='multipart'
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn("username", response.json())
+        self.assertIn("erro", response.json())
+        self.assertEqual(response.json()["erro"], "Nome de usuário já existe.")
 
     def test_listar_usuarios_view(self):
         """Testa o endpoint de listagem de usuários"""
@@ -61,7 +66,6 @@ class UsuarioTests(TestCase):
         usuarios = json.loads(response.content)
         self.assertEqual(len(usuarios), 1)
         self.assertEqual(usuarios[0]['nome'], "João")
-
 
 class EventoTests(TestCase):
     def setUp(self):
