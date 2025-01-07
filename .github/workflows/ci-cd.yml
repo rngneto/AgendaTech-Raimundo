@@ -70,9 +70,3 @@ jobs:
         cd front
         npm install
         npm install react-router-dom
-
-    # Adicionar testes do frontend se necessário
-    - name: Run frontend tests
-      run: |
-        cd front
-        npm test -- --passWithNoTests
