@@ -1,0 +1,125 @@
+.minha-conta-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.minha-conta-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.minha-conta-imagem {
+  display: block;
+  margin: 0 auto 20px auto;
+  max-width: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007bff;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Área de informações do usuário */
+.minha-conta-container .user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+
+/* Imagem de perfil do usuário */
+.minha-conta-container .user-info img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #142f68;
+}
+
+/* Detalhes do usuário */
+.minha-conta-container .user-details {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Botões de ação dentro da página "Minha Conta" */
+.minha-conta-container .user-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* Botão de ação */
+.minha-conta-container .user-actions button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Botão de editar */
+.minha-conta-container .user-actions .edit-btn {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.minha-conta-container .user-actions .edit-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Botão de excluir */
+.minha-conta-container .user-actions .delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.minha-conta-container .user-actions .delete-btn:hover {
+  background-color: #a71d2a;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .minha-conta-container {
+    padding: 15px;
+  }
+
+  .minha-conta-container .user-info img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .minha-conta-container .user-actions {
+    flex-direction: column;
+  }
+}
+
+.mensagem {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+  color: green;
+}

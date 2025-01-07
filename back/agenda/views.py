@@ -189,7 +189,12 @@ def cadastrar_evento(request):
 def listar_eventos(request):
     """Lista eventos com suporte a paginação"""
     try:
-        eventos = Evento.objects.all().order_by('data')
+        termo_busca = request.GET.get('nome', '')  # Obtém o termo de busca da requisição
+        if termo_busca:
+            eventos = Evento.objects.filter(nome__icontains=termo_busca).order_by('data')
+        else:
+            eventos = Evento.objects.all().order_by('data')
+        
         paginator = Paginator(eventos, 12)  # Paginação: 12 eventos por página
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
