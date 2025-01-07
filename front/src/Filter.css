@@ -1,0 +1,43 @@
+.filter-container {
+  display: flex;
+  gap: 10px; /* Espaçamento entre os botões */
+  justify-content: center; /* Centraliza os elementos */
+  margin: 20px 0; /* Espaçamento acima e abaixo */
+  padding: 5px; /* Pequeno espaçamento interno */
+  border: 1px solid #ddd; /* Contorno leve */
+  border-radius: 8px; /* Bordas arredondadas */
+  background-color: transparent; /* Fundo transparente */
+  width: fit-content; /* Tamanho ajustado ao conteúdo */
+  margin-left: auto;
+  margin-right: auto; /* Centraliza horizontalmente */
+}
+
+.filter-container select {
+  padding: 6px 8px; /* Tamanho compacto */
+  font-size: 14px; /* Ajuste de fonte */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  flex: 1; /* Tamanho uniforme */
+  max-width: 200px; /* Tamanho máximo */
+}
+
+.filter-container select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.filter-reset {
+  padding: 5px 10px; /* Dimensões compactas */
+  font-size: 14px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-reset:hover {
+  background-color: #cc0000;
+}
