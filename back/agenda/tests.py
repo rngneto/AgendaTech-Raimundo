@@ -3,6 +3,10 @@ from django.urls import reverse
 from .models import Usuario, Evento
 import json
 from datetime import date, time
+from io import BytesIO
+from PIL import Image
+from django.core.files.uploadedfile import SimpleUploadedFile
+import os
 
 class UsuarioTests(TestCase):
     def setUp(self):
@@ -23,24 +27,58 @@ class UsuarioTests(TestCase):
         self.assertEqual(str(self.usuario), "João Silva")
 
     def test_cadastrar_usuario_view(self):
-        """Testa o endpoint de cadastro de usuário"""
+        """Testa o endpoint de cadastro de usuário com e sem envio de imagem"""
+
+        # Dados do usuário
         data = {
             "nome": "Maria",
             "sobrenome": "Santos",
             "username": "mariasantos",
             "senha": "senha456"
         }
-        with open('test_image.jpg', 'rb') as img:
-            response = self.client.post(
-                reverse('cadastrar_usuario'),
-                data={
-                    **data,
-                    "imagem": img
-                },
-                format='multipart'
-            )
-        self.assertEqual(response.status_code, 201)
-        self.assertTrue(Usuario.objects.filter(username="mariasantos").exists())
+
+        # 1. Cenário com imagem
+        image = BytesIO()
+        Image.new('RGB', (100, 100)).save(image, 'JPEG')
+        image.seek(0)
+        uploaded_image = SimpleUploadedFile("test_image.jpg", image.getvalue(), content_type="image/jpeg")
+
+        response_with_image = self.client.post(
+            reverse('cadastrar_usuario'),
+            data={
+                **data,
+                "imagem": uploaded_image
+            }
+        )
+
+        # Verificações para o cenário com imagem
+        self.assertEqual(response_with_image.status_code, 201)
+        usuario_com_imagem = Usuario.objects.get(username="mariasantos")
+        self.assertIsNotNone(usuario_com_imagem.imagem, "A imagem deveria estar salva no banco de dados.")
+        self.assertTrue(
+            usuario_com_imagem.imagem.name.startswith("usuarios/profile-image-cropped"),
+            "A imagem salva não possui o prefixo esperado."
+        )
+
+        # Verifica se o arquivo foi salvo no local correto
+        imagem_caminho = os.path.join("AgendaTech", "back", "media", usuario_com_imagem.imagem.name)
+        self.assertTrue(os.path.exists(imagem_caminho), "O arquivo de imagem não foi salvo no local esperado.")
+
+        # 2. Cenário sem imagem
+        response_without_image = self.client.post(
+            reverse('cadastrar_usuario'),
+            data={
+                "nome": "João",
+                "sobrenome": "Silva",
+                "username": "joaosilva",
+                "senha": "senha123"
+            }
+        )
+
+        # Verificações para o cenário sem imagem
+        self.assertEqual(response_without_image.status_code, 201)
+        usuario_sem_imagem = Usuario.objects.get(username="joaosilva")
+        self.assertIsNone(usuario_sem_imagem.imagem, "A imagem deveria ser None quando não enviada.")
 
     def test_cadastrar_usuario_com_username_repetido(self):
         """Testa o cadastro de usuário com username duplicado"""
