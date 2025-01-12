@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Cropper from 'react-easy-crop';
-import getCroppedImg from './cropImageHelper';
+import CustomCropper from './CustomCropper';
+import cropImageForRect from './cropImageHelperRect';
 import './CreateEvent.css';
 
 function CreateEvent() {
@@ -19,14 +19,12 @@ function CreateEvent() {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [croppedFileName, setCroppedFileName] = useState(null); // Adiciona o estado aqui
+  const [croppedFileName, setCroppedFileName] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -45,24 +43,24 @@ function CreateEvent() {
 
   const handleCropSave = async () => {
     try {
-      const croppedImageBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
+      const croppedImageBlob = await cropImageForRect(imageSrc, croppedAreaPixels);
+
       const file = new File(
         [croppedImageBlob],
-        'imagem-cortada.jpg', // Nome fixo para testes. Você pode usar uma lógica dinâmica.
+        'imagem-cortada.jpg',
         { type: 'image/jpeg' }
       );
       setFormData({ ...formData, imagem: file });
-      setCroppedFileName(file.name); // Atualiza o nome do arquivo
-      setImageSrc(null); // Fecha o modal de recorte
+      setCroppedFileName(file.name);
+      setImageSrc(null);
     } catch (error) {
       console.error('Erro ao recortar imagem:', error);
       alert('Erro ao salvar o recorte da imagem.');
     }
   };
 
-
   const handleCropCancel = () => {
-    setImageSrc(null); // Fecha o modal de recorte sem salvar
+    setImageSrc(null);
   };
 
   const handleSubmit = async (e) => {
@@ -92,7 +90,9 @@ function CreateEvent() {
           descricao: '',
           preco: '',
           imagem: null,
-        });
+        }
+      );
+      window.location.href = '/'; // Redireciona para a página inicial
       } else {
         alert('Erro ao cadastrar evento. Tente novamente.');
       }
@@ -108,20 +108,18 @@ function CreateEvent() {
 
       {imageSrc ? (
         <div className="cropper-container-vertical">
-          {/* Área de recorte */}
           <div className="cropper-area">
-            <Cropper
+            <CustomCropper
               image={imageSrc}
               crop={crop}
               zoom={zoom}
               aspect={4 / 3}
+              cropShape="rect"
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={handleCropComplete}
             />
           </div>
-
-          {/* Botões de ação */}
           <div className="cropper-buttons">
             <button onClick={handleCropSave} className="btn btn-primary">
               Confirmar Recorte
@@ -132,8 +130,6 @@ function CreateEvent() {
           </div>
         </div>
       ) : (
-
-
         <form onSubmit={handleSubmit} className="create-event-form">
           <div>
             <label>Nome do Evento</label>
@@ -191,7 +187,7 @@ function CreateEvent() {
               value={formData.link}
               onChange={handleChange}
             />
-          </div>        
+          </div>
           <div>
             <label>Descrição</label>
             <textarea
