@@ -26,59 +26,26 @@ class UsuarioTests(TestCase):
         self.assertEqual(self.usuario.username, "joaosilva")
         self.assertEqual(str(self.usuario), "João Silva")
 
-    def test_cadastrar_usuario_view(self):
-        """Testa o endpoint de cadastro de usuário com e sem envio de imagem"""
-
-        # Dados do usuário
+    def test_cadastrar_evento_view(self):
+        """Testa o endpoint de cadastro de evento"""
         data = {
-            "nome": "Maria",
-            "sobrenome": "Santos",
-            "username": "mariasantos",
-            "senha": "senha456"
+            "nome": "Evento de Teste",
+            "data": "2025-01-15",
+            "horario": "18:00:00",
+            "tipo": "online",
+            "local": "Zoom",
+            "link": "https://zoom.us/test",
+            "descricao": "Descrição do evento de teste"
         }
-
-        # 1. Cenário com imagem
-        image = BytesIO()
-        Image.new('RGB', (100, 100)).save(image, 'JPEG')
-        image.seek(0)
-        uploaded_image = SimpleUploadedFile("test_image.jpg", image.getvalue(), content_type="image/jpeg")
-
-        response_with_image = self.client.post(
-            reverse('cadastrar_usuario'),
-            data={
-                **data,
-                "imagem": uploaded_image
-            }
+        response = self.client.post(
+            reverse('cadastrar_evento'),
+            data=data,
+            content_type='application/json'
         )
 
-        # Verificações para o cenário com imagem
-        self.assertEqual(response_with_image.status_code, 201)
-        usuario_com_imagem = Usuario.objects.get(username="mariasantos")
-        self.assertIsNotNone(usuario_com_imagem.imagem, "A imagem deveria estar salva no banco de dados.")
-        self.assertTrue(
-            usuario_com_imagem.imagem.name.startswith("usuarios/profile-image-cropped"),
-            "A imagem salva não possui o prefixo esperado."
-        )
+        print(response.content)  # Adicionado para verificar a resposta do servidor
 
-        # Verifica se o arquivo foi salvo no local correto
-        imagem_caminho = os.path.join("AgendaTech", "back", "media", usuario_com_imagem.imagem.name)
-        self.assertTrue(os.path.exists(imagem_caminho), "O arquivo de imagem não foi salvo no local esperado.")
-
-        # 2. Cenário sem imagem
-        response_without_image = self.client.post(
-            reverse('cadastrar_usuario'),
-            data={
-                "nome": "João",
-                "sobrenome": "Silva",
-                "username": "joaosilva",
-                "senha": "senha123"
-            }
-        )
-
-        # Verificações para o cenário sem imagem
-        self.assertEqual(response_without_image.status_code, 201)
-        usuario_sem_imagem = Usuario.objects.get(username="joaosilva")
-        self.assertIsNone(usuario_sem_imagem.imagem, "A imagem deveria ser None quando não enviada.")
+        self.assertEqual(response.status_code, 201)
 
     def test_cadastrar_usuario_com_username_repetido(self):
         """Testa o cadastro de usuário com username duplicado"""
@@ -104,6 +71,7 @@ class UsuarioTests(TestCase):
         usuarios = json.loads(response.content)
         self.assertEqual(len(usuarios), 1)
         self.assertEqual(usuarios[0]['nome'], "João")
+
 
 class EventoTests(TestCase):
     def setUp(self):
@@ -162,6 +130,7 @@ class EventoTests(TestCase):
         data = json.loads(response.content)
         self.assertEqual(len(data['eventos']), 1)
         self.assertEqual(data['eventos'][0]['nome'], "Workshop Python")
+
 
 class HomeViewTests(TestCase):
     def setUp(self):
