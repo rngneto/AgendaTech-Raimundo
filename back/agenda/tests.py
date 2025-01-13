@@ -328,28 +328,29 @@ class UsuarioTests(TestCase):
         self.assertIn("erro", response_sem_nome.json())
 
 class EventoTests(TestCase):
-    def setUp(self):
+    
+     def setUp(self):
         """Configuração inicial para os testes de Evento"""
         self.client = Client()
 
         # Criando uma imagem em memória para simular o upload
         image = BytesIO()
-        Image.new('RGB', (200, 200), color='blue').save(image, 'JPEG')
+        Image.new('RGB', (100, 100), color='blue').save(image, 'JPEG')
         image.seek(0)
         uploaded_image = SimpleUploadedFile("test_event_image.jpg", image.getvalue(), content_type="image/jpeg")
 
-    # Criando o evento com imagem e preço
-    self.evento = Evento.objects.create(
-        nome="Workshop Python",
-        data=date(2025, 1, 15),
-        horario=time(14, 30),
-        tipo="presencial",
-        local="Centro de Convenções",
-        link="https://evento.com",
-        descricao="Workshop sobre Python",
-        preco=50.00,  # Adicionando o preço
-        imagem=uploaded_image  # Adicionando a imagem
-    )
+        # Criando o evento com imagem e preço
+        self.evento = Evento.objects.create(
+            nome="Workshop Python",
+            data=date(2025, 1, 15),
+            horario=time(14, 30),
+            tipo="presencial",
+            local="Centro de Convenções",
+            link="https://evento.com",
+            descricao="Workshop sobre Python",
+            preco=50.00,  # Adicionando o preço
+            imagem=uploaded_image  # Adicionando a imagem
+        )
 
 
 
