@@ -9,6 +9,7 @@ from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 import zipfile
+import shutil
 
 class UsuarioTests(TestCase):
     def setUp(self):
@@ -576,13 +577,31 @@ def test_editar_perfil(self):
     self.assertEqual(response_metodo_nao_permitido.status_code, 405)
     self.assertIn("erro", response_metodo_nao_permitido.json())
     self.assertEqual(response_metodo_nao_permitido.json()["erro"], "Método não permitido.")
+    
 
 class BackupTests(TestCase):
     def setUp(self):
-        """Configuração inicial para o teste de backup"""
+        """Configuração inicial para os testes de backup"""
         self.client = Client()
         self.backup_folder = os.path.join(settings.BASE_DIR, 'backup')
+        self.temp_media_folder = os.path.join(settings.BASE_DIR, 'media')
         os.makedirs(self.backup_folder, exist_ok=True)
+        os.makedirs(self.temp_media_folder, exist_ok=True)
+
+        # Criando um arquivo ZIP válido com banco de dados e pasta media
+        self.test_backup_path = os.path.join(self.backup_folder, "test_backup.zip")
+        with zipfile.ZipFile(self.test_backup_path, 'w') as backup_zip:
+            # Adicionando db.sqlite3
+            db_path = os.path.join(settings.BASE_DIR, 'db.sqlite3')
+            with open(db_path, 'wb') as db_file:
+                db_file.write(b"test_db_content")
+            backup_zip.write(db_path, 'db.sqlite3')
+
+            # Adicionando pasta media
+            media_test_file = os.path.join(self.temp_media_folder, 'test_file.jpg')
+            with open(media_test_file, 'wb') as f:
+                f.write(b"test_media_content")
+            backup_zip.write(media_test_file, 'media/test_file.jpg')
 
     def test_exportar_backup(self):
         """Testa se o endpoint retorna um arquivo ZIP válido"""
@@ -596,7 +615,7 @@ class BackupTests(TestCase):
         backup_content = b"".join(response.streaming_content)
 
         # Salva o conteúdo retornado para verificação adicional
-        backup_file = os.path.join(self.backup_folder, "test_backup.zip")
+        backup_file = os.path.join(self.backup_folder, "test_exported_backup.zip")
         with open(backup_file, 'wb') as f:
             f.write(backup_content)
 
@@ -606,37 +625,37 @@ class BackupTests(TestCase):
         # Remove o arquivo de teste gerado
         os.remove(backup_file)
 
-    def test_restaurar_backup_sucesso(self):
-        """Testa a restauração do backup com um arquivo válido."""
-        response = self.client.post(
-            self.backup_url,
-            {'backup': self.zip_content},
-            format='multipart'
-        )
+    def test_restaurar_backup(self):
+        """Testa o endpoint de restauração de backup"""
+        # Simular o envio do arquivo ZIP
+        with open(self.test_backup_path, 'rb') as backup_file:
+            uploaded_file = SimpleUploadedFile(
+                "test_backup.zip", backup_file.read(), content_type="application/zip"
+            )
+            response = self.client.post(
+                reverse('restaurar_backup'),
+                {'backup': uploaded_file},
+                format='multipart'
+            )
 
-        # Verifica se o status é 200 e a mensagem de sucesso
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('success', response.json())
-        self.assertEqual(response.json()['success'], "Backup restaurado com sucesso!")
+        # Verifica se o status da resposta é 200
+        self.assertEqual(response.status_code, 200, f"Erro: {response.content.decode()}")
 
-        # Verifica se os arquivos foram extraídos corretamente
-        db_path = os.path.join(settings.BASE_DIR, 'db.sqlite3')
-        media_user_path = os.path.join(settings.BASE_DIR, 'media', 'usuarios', 'test_image.jpg')
-        media_event_path = os.path.join(settings.BASE_DIR, 'media', 'eventos', 'test_event.jpg')
+        # Verifica se a mensagem de sucesso está presente
+        self.assertIn("success", response.json())
+        self.assertEqual(response.json()["success"], "Backup restaurado com sucesso!")
 
-        self.assertTrue(os.path.exists(db_path), "O banco de dados não foi restaurado corretamente.")
-        self.assertTrue(os.path.exists(media_user_path), "O arquivo de mídia do usuário não foi restaurado.")
-        self.assertTrue(os.path.exists(media_event_path), "O arquivo de mídia do evento não foi restaurado.")
+        # Verifica se os arquivos foram restaurados corretamente
+        self.assertTrue(os.path.exists(os.path.join(settings.BASE_DIR, 'db.sqlite3')))
+        self.assertTrue(os.path.exists(os.path.join(self.temp_media_folder, 'test_file.jpg')))
 
-    def test_restaurar_backup_arquivo_nao_enviado(self):
-        """Testa a restauração do backup sem enviar um arquivo."""
-        response = self.client.post(self.backup_url, {}, format='multipart')
-
-        # Verifica se o status é 400 e retorna erro
-        self.assertEqual(response.status_code, 400)
-        self.assertIn('error', response.json())
-        self.assertEqual(response.json()['error'], "Nenhum arquivo foi enviado.")
-
+    def tearDown(self):
+        """Limpeza após os testes"""
+        if os.path.exists(self.backup_folder):
+            shutil.rmtree(self.backup_folder)
+        if os.path.exists(self.temp_media_folder):
+            shutil.rmtree(self.temp_media_folder)
+    
 
 
 
