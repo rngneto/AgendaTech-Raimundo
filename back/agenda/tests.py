@@ -422,11 +422,6 @@ class EventoTests(TestCase):
         self.assertIsNotNone(evento_cadastrado.imagem)
 
 
-
-
-
-
-
     def test_listar_eventos_view(self):
         """Testa o endpoint de listagem de eventos"""
         response = self.client.get(reverse('listar_eventos'))
