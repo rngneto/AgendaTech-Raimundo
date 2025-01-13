@@ -59,218 +59,51 @@ class UsuarioTests(TestCase):
         self.assertEqual(len(usuarios), 1)
         self.assertEqual(usuarios[0]['nome'], "João")
 
-    def test_criar_usuario_imagem(self):
-        """Testa a criação de um usuário com imagem"""
+def test_criar_usuario_imagem(self):
+    """Testa a criação de um usuário com imagem"""
 
-        # Criando uma imagem em memória para simular o upload
-        image = BytesIO()
-        Image.new('RGB', (100, 100), color='green').save(image, 'JPEG')
-        image.seek(0)
-        uploaded_image = SimpleUploadedFile("test_user_image.jpg", image.getvalue(), content_type="image/jpeg")
+    # Criando uma imagem em memória para simular o upload
+    image = BytesIO()
+    Image.new('RGB', (100, 100), color='green').save(image, 'JPEG')
+    image.seek(0)
+    uploaded_image = SimpleUploadedFile("test_user_image.jpg", image.getvalue(), content_type="image/jpeg")
 
-        # Dados do usuário
-        data = {
-            "nome": "Maria",
-            "sobrenome": "Santos",
-            "username": "mariasantos",
-            "senha": "senha456",
-            "imagem": uploaded_image
-        }
+    # Dados do usuário
+    data = {
+        "nome": "Maria",
+        "sobrenome": "Santos",
+        "username": "mariasantos",
+        "senha": "senha456",
+        "imagem": uploaded_image
+    }
 
-        # Envia a requisição POST para criar o usuário
-        response = self.client.post(
-            reverse('cadastrar_usuario'),
-            data=data,
-            format="multipart"  # Formato necessário para envio de arquivos
-        )
+    # Envia a requisição POST para criar o usuário
+    response = self.client.post(
+        reverse('cadastrar_usuario'),
+        data=data,
+        format="multipart"  # Formato necessário para envio de arquivos
+    )
 
-        # Verificação da resposta
-        self.assertEqual(response.status_code, 201)
-        response_data = response.json()
-        self.assertIn("mensagem", response_data)
-        self.assertEqual(response_data["mensagem"], "Usuário cadastrado com sucesso!")
-        self.assertEqual(response_data["username"], "mariasantos")
-        self.assertIsNotNone(response_data["imagem"], "A imagem deveria ser salva e retornar uma URL.")
+    # Verificação da resposta
+    self.assertEqual(response.status_code, 201)
+    response_data = response.json()
+    self.assertIn("mensagem", response_data)
+    self.assertEqual(response_data["mensagem"], "Usuário cadastrado com sucesso!")
+    self.assertEqual(response_data["username"], "mariasantos")
+    self.assertIsNotNone(response_data["imagem"], "A imagem deveria ser salva e retornar uma URL.")
 
-        # Verifica se o usuário foi salvo no banco de dados
-        usuario = Usuario.objects.get(username="mariasantos")
-        self.assertEqual(usuario.nome, "Maria")
-        self.assertEqual(usuario.sobrenome, "Santos")
-        self.assertEqual(usuario.username, "mariasantos")
-        self.assertIsNotNone(usuario.imagem, "A imagem deveria estar salva no banco de dados.")
-        self.assertTrue(usuario.imagem.name.startswith("usuarios/"), "A imagem não foi salva no diretório correto.")
+    # Verifica se o usuário foi salvo no banco de dados
+    usuario = Usuario.objects.get(username="mariasantos")
+    self.assertEqual(usuario.nome, "Maria")
+    self.assertEqual(usuario.sobrenome, "Santos")
+    self.assertEqual(usuario.username, "mariasantos")
+    self.assertIsNotNone(usuario.imagem, "A imagem deveria estar salva no banco de dados.")
+    self.assertTrue(usuario.imagem.name.startswith("usuarios/"), "A imagem não foi salva no diretório correto.")
     
-    def test_listar_usuarios_view(self):
-            """Testa o endpoint de listagem de todos os usuários"""
+def test_listar_usuarios_view(self):
+        """Testa o endpoint de listagem de todos os usuários"""
 
-            # Criar múltiplos usuários para o teste
-            Usuario.objects.create(
-                nome="Maria",
-                sobrenome="Santos",
-                username="mariasantos",
-                senha="senha456"
-            )
-            Usuario.objects.create(
-                nome="Carlos",
-                sobrenome="Almeida",
-                username="carlosalmeida",
-                senha="senha789"
-            )
-
-            # Requisição para listar todos os usuários
-            response = self.client.get(reverse('listar_usuarios'))
-            self.assertEqual(response.status_code, 200)
-            usuarios = json.loads(response.content)
-            
-            # Certificar-se de que todos os usuários foram retornados
-            self.assertEqual(len(usuarios), 3)  # Incluindo o usuário criado no setUp
-            self.assertEqual(usuarios[0]['nome'], "João")
-            self.assertEqual(usuarios[1]['nome'], "Maria")
-            self.assertEqual(usuarios[2]['nome'], "Carlos")
-
-    def test_login_usuario(self):
-        """Testa o endpoint de login de um usuário"""
-
-        # Cenário 1: Login bem-sucedido
-        data_login_sucesso = {
-            "username": "joaosilva",
-            "senha": "senha123"
-        }
-        response_sucesso = self.client.post(
-            reverse('login_usuario'),
-            data=json.dumps(data_login_sucesso),
-            content_type='application/json'
-        )
-
-        self.assertEqual(response_sucesso.status_code, 200)
-        response_data = response_sucesso.json()
-        self.assertIn("mensagem", response_data)
-        self.assertEqual(response_data["mensagem"], "Login realizado com sucesso!")
-        self.assertEqual(response_data["username"], "joaosilva")
-        self.assertEqual(response_data["nome"], "João")
-        self.assertEqual(response_data["sobrenome"], "Silva")
-        self.assertIsNone(response_data["imagem"])  # Nenhuma imagem foi adicionada no setup
-
-        # Cenário 2: Login com senha incorreta
-        data_senha_incorreta = {
-            "username": "joaosilva",
-            "senha": "senha_errada"
-        }
-        response_senha_incorreta = self.client.post(
-            reverse('login_usuario'),
-            data=json.dumps(data_senha_incorreta),
-            content_type='application/json'
-        )
-
-        self.assertEqual(response_senha_incorreta.status_code, 401)
-        self.assertIn("erro", response_senha_incorreta.json())
-        self.assertEqual(response_senha_incorreta.json()["erro"], "Usuário ou senha incorretos.")
-
-        # Cenário 3: Login com username inexistente
-        data_usuario_inexistente = {
-            "username": "usuario_inexistente",
-            "senha": "qualquer_senha"
-        }
-        response_usuario_inexistente = self.client.post(
-            reverse('login_usuario'),
-            data=json.dumps(data_usuario_inexistente),
-            content_type='application/json'
-        )
-
-        self.assertEqual(response_usuario_inexistente.status_code, 401)
-        self.assertIn("erro", response_usuario_inexistente.json())
-        self.assertEqual(response_usuario_inexistente.json()["erro"], "Usuário ou senha incorretos.")
-
-        # Cenário 4: Login com dados faltando
-        data_faltando_username = {"senha": "senha123"}
-        response_faltando_username = self.client.post(
-            reverse('login_usuario'),
-            data=json.dumps(data_faltando_username),
-            content_type='application/json'
-        )
-
-        self.assertEqual(response_faltando_username.status_code, 400)
-        self.assertIn("erro", response_faltando_username.json())
-
-        # Cenário 5: Método não permitido
-        response_metodo_nao_permitido = self.client.get(reverse('login_usuario'))
-        self.assertEqual(response_metodo_nao_permitido.status_code, 405)
-        self.assertEqual(response_metodo_nao_permitido.json()["erro"], "Método não permitido")
-
-    def test_listar_usuarios_json_view(self):
-        """Testa o endpoint de listagem de todos os usuários em formato JSON"""
-
-        # Criação de usuários adicionais com caracteres especiais no nome
-        Usuario.objects.create(
-            nome="José",
-            sobrenome="da Silva",
-            username="jose.silva",
-            senha="senha123"
-        )
-        Usuario.objects.create(
-            nome="Mária",
-            sobrenome="Oliveira",
-            username="maria.oliveira",
-            senha="senha456"
-        )
-
-        # Requisição para o endpoint
-        response = self.client.get(reverse('listar_usuarios_json'))
-
-        # Verifica se o status da resposta é 200 (OK)
-        self.assertEqual(response.status_code, 200)
-
-        # Converte o conteúdo da resposta em JSON
-        usuarios_data = response.json()
-
-        # Verifica se o número de usuários está correto
-        self.assertEqual(len(usuarios_data), 3)  # Inclui o usuário criado no setUp
-
-        # Verifica os dados dos usuários
-        self.assertEqual(usuarios_data[0]['nome'], "João")
-        self.assertEqual(usuarios_data[0]['sobrenome'], "Silva")
-
-        self.assertEqual(usuarios_data[1]['nome'], "José")
-        self.assertEqual(usuarios_data[1]['sobrenome'], "da Silva")
-
-        self.assertEqual(usuarios_data[2]['nome'], "Mária")
-        self.assertEqual(usuarios_data[2]['sobrenome'], "Oliveira")
-
-    def test_excluir_usuario(self):
-        """Testa a exclusão de um usuário"""
-
-        # Verifica que o usuário existe antes da exclusão
-        usuario = Usuario.objects.get(username="joaosilva")
-        self.assertIsNotNone(usuario)
-
-        # Exclui o usuário
-        usuario.delete()
-
-        # Verifica que o usuário foi removido do banco de dados
-        self.assertFalse(Usuario.objects.filter(username="joaosilva").exists())
-
-    def test_atualizar_usuario(self):
-        """Testa a atualização dos dados de um usuário"""
-
-        # Busca o usuário existente
-        usuario = Usuario.objects.get(username="joaosilva")
-
-        # Atualiza os dados do usuário
-        usuario.nome = "João Atualizado"
-        usuario.sobrenome = "Silva Atualizado"
-        usuario.save()
-
-        # Busca novamente o usuário atualizado
-        usuario_atualizado = Usuario.objects.get(username="joaosilva")
-
-        # Verifica se os dados foram atualizados corretamente
-        self.assertEqual(usuario_atualizado.nome, "João Atualizado")
-        self.assertEqual(usuario_atualizado.sobrenome, "Silva Atualizado")
-
-    def test_buscar_usuario_por_nome(self):
-        """Testa a busca de usuários pelo nome"""
-
-        # Criar usuários adicionais para o teste
+        # Criar múltiplos usuários para o teste
         Usuario.objects.create(
             nome="Maria",
             sobrenome="Santos",
@@ -278,79 +111,237 @@ class UsuarioTests(TestCase):
             senha="senha456"
         )
         Usuario.objects.create(
-            nome="João",
+            nome="Carlos",
             sobrenome="Almeida",
-            username="joaoalmeida",
+            username="carlosalmeida",
             senha="senha789"
         )
 
-        # Buscar usuários com o nome "João"
-        usuarios = Usuario.objects.filter(nome="João")
+        # Requisição para listar todos os usuários
+        response = self.client.get(reverse('listar_usuarios'))
+        self.assertEqual(response.status_code, 200)
+        usuarios = json.loads(response.content)
+        
+        # Certificar-se de que todos os usuários foram retornados
+        self.assertEqual(len(usuarios), 3)  # Incluindo o usuário criado no setUp
+        self.assertEqual(usuarios[0]['nome'], "João")
+        self.assertEqual(usuarios[1]['nome'], "Maria")
+        self.assertEqual(usuarios[2]['nome'], "Carlos")
 
-        # Verificar o número de usuários encontrados
-        self.assertEqual(len(usuarios), 2)
+def test_login_usuario(self):
+    """Testa o endpoint de login de um usuário"""
 
-        # Verificar os dados dos usuários encontrados
-        self.assertEqual(usuarios[0].nome, "João")
-        self.assertEqual(usuarios[1].nome, "João")
+    # Cenário 1: Login bem-sucedido
+    data_login_sucesso = {
+        "username": "joaosilva",
+        "senha": "senha123"
+    }
+    response_sucesso = self.client.post(
+        reverse('login_usuario'),
+        data=json.dumps(data_login_sucesso),
+        content_type='application/json'
+    )
 
-    def test_cadastrar_usuario_dados_invalidos(self):
-        """Testa o cadastro de usuário com dados inválidos"""
+    self.assertEqual(response_sucesso.status_code, 200)
+    response_data = response_sucesso.json()
+    self.assertIn("mensagem", response_data)
+    self.assertEqual(response_data["mensagem"], "Login realizado com sucesso!")
+    self.assertEqual(response_data["username"], "joaosilva")
+    self.assertEqual(response_data["nome"], "João")
+    self.assertEqual(response_data["sobrenome"], "Silva")
+    self.assertIsNone(response_data["imagem"])  # Nenhuma imagem foi adicionada no setup
 
-        # Tenta cadastrar sem o campo "username"
-        data_sem_username = {
-            "nome": "Carlos",
-            "sobrenome": "Almeida",
-            "senha": "senha123"
-        }
-        response_sem_username = self.client.post(
-            reverse('cadastrar_usuario'),
-            data=data_sem_username,
-            format='multipart'
-        )
+    # Cenário 2: Login com senha incorreta
+    data_senha_incorreta = {
+        "username": "joaosilva",
+        "senha": "senha_errada"
+    }
+    response_senha_incorreta = self.client.post(
+        reverse('login_usuario'),
+        data=json.dumps(data_senha_incorreta),
+        content_type='application/json'
+    )
 
-        self.assertEqual(response_sem_username.status_code, 400)
-        self.assertIn("erro", response_sem_username.json())
+    self.assertEqual(response_senha_incorreta.status_code, 401)
+    self.assertIn("erro", response_senha_incorreta.json())
+    self.assertEqual(response_senha_incorreta.json()["erro"], "Usuário ou senha incorretos.")
 
-        # Tenta cadastrar sem o campo "nome"
-        data_sem_nome = {
-            "sobrenome": "Almeida",
-            "username": "carlosalmeida",
-            "senha": "senha123"
-        }
-        response_sem_nome = self.client.post(
-            reverse('cadastrar_usuario'),
-            data=data_sem_nome,
-            format='multipart'
-        )
+    # Cenário 3: Login com username inexistente
+    data_usuario_inexistente = {
+        "username": "usuario_inexistente",
+        "senha": "qualquer_senha"
+    }
+    response_usuario_inexistente = self.client.post(
+        reverse('login_usuario'),
+        data=json.dumps(data_usuario_inexistente),
+        content_type='application/json'
+    )
 
-        self.assertEqual(response_sem_nome.status_code, 400)
-        self.assertIn("erro", response_sem_nome.json())
+    self.assertEqual(response_usuario_inexistente.status_code, 401)
+    self.assertIn("erro", response_usuario_inexistente.json())
+    self.assertEqual(response_usuario_inexistente.json()["erro"], "Usuário ou senha incorretos.")
+
+    # Cenário 4: Login com dados faltando
+    data_faltando_username = {"senha": "senha123"}
+    response_faltando_username = self.client.post(
+        reverse('login_usuario'),
+        data=json.dumps(data_faltando_username),
+        content_type='application/json'
+    )
+
+    self.assertEqual(response_faltando_username.status_code, 400)
+    self.assertIn("erro", response_faltando_username.json())
+
+    # Cenário 5: Método não permitido
+    response_metodo_nao_permitido = self.client.get(reverse('login_usuario'))
+    self.assertEqual(response_metodo_nao_permitido.status_code, 405)
+    self.assertEqual(response_metodo_nao_permitido.json()["erro"], "Método não permitido")
+
+def test_listar_usuarios_json_view(self):
+    """Testa o endpoint de listagem de todos os usuários em formato JSON"""
+
+    # Criação de usuários adicionais com caracteres especiais no nome
+    Usuario.objects.create(
+        nome="José",
+        sobrenome="da Silva",
+        username="jose.silva",
+        senha="senha123"
+    )
+    Usuario.objects.create(
+        nome="Mária",
+        sobrenome="Oliveira",
+        username="maria.oliveira",
+        senha="senha456"
+    )
+
+    # Requisição para o endpoint
+    response = self.client.get(reverse('listar_usuarios_json'))
+
+    # Verifica se o status da resposta é 200 (OK)
+    self.assertEqual(response.status_code, 200)
+
+    # Converte o conteúdo da resposta em JSON
+    usuarios_data = response.json()
+
+    # Verifica se o número de usuários está correto
+    self.assertEqual(len(usuarios_data), 3)  # Inclui o usuário criado no setUp
+
+    # Verifica os dados dos usuários
+    self.assertEqual(usuarios_data[0]['nome'], "João")
+    self.assertEqual(usuarios_data[0]['sobrenome'], "Silva")
+
+    self.assertEqual(usuarios_data[1]['nome'], "José")
+    self.assertEqual(usuarios_data[1]['sobrenome'], "da Silva")
+
+    self.assertEqual(usuarios_data[2]['nome'], "Mária")
+    self.assertEqual(usuarios_data[2]['sobrenome'], "Oliveira")
+
+def test_excluir_usuario(self):
+    """Testa a exclusão de um usuário"""
+
+    # Verifica que o usuário existe antes da exclusão
+    usuario = Usuario.objects.get(username="joaosilva")
+    self.assertIsNotNone(usuario)
+
+    # Exclui o usuário
+    usuario.delete()
+
+    # Verifica que o usuário foi removido do banco de dados
+    self.assertFalse(Usuario.objects.filter(username="joaosilva").exists())
+
+def test_atualizar_usuario(self):
+    """Testa a atualização dos dados de um usuário"""
+
+    # Busca o usuário existente
+    usuario = Usuario.objects.get(username="joaosilva")
+
+    # Atualiza os dados do usuário
+    usuario.nome = "João Atualizado"
+    usuario.sobrenome = "Silva Atualizado"
+    usuario.save()
+
+    # Busca novamente o usuário atualizado
+    usuario_atualizado = Usuario.objects.get(username="joaosilva")
+
+    # Verifica se os dados foram atualizados corretamente
+    self.assertEqual(usuario_atualizado.nome, "João Atualizado")
+    self.assertEqual(usuario_atualizado.sobrenome, "Silva Atualizado")
+
+def test_buscar_usuario_por_nome(self):
+    """Testa a busca de usuários pelo nome"""
+
+    # Criar usuários adicionais para o teste
+    Usuario.objects.create(
+        nome="Maria",
+        sobrenome="Santos",
+        username="mariasantos",
+        senha="senha456"
+    )
+    Usuario.objects.create(
+        nome="João",
+        sobrenome="Almeida",
+        username="joaoalmeida",
+        senha="senha789"
+    )
+
+    # Buscar usuários com o nome "João"
+    usuarios = Usuario.objects.filter(nome="João")
+
+    # Verificar o número de usuários encontrados
+    self.assertEqual(len(usuarios), 2)
+
+    # Verificar os dados dos usuários encontrados
+    self.assertEqual(usuarios[0].nome, "João")
+    self.assertEqual(usuarios[1].nome, "João")
+
+def test_cadastrar_usuario_dados_invalidos(self):
+    """Testa o cadastro de usuário com dados inválidos"""
+
+    # Tenta cadastrar sem o campo "username"
+    data_sem_username = {
+        "nome": "Carlos",
+        "sobrenome": "Almeida",
+        "senha": "senha123"
+    }
+    response_sem_username = self.client.post(
+        reverse('cadastrar_usuario'),
+        data=data_sem_username,
+        format='multipart'
+    )
+
+    self.assertEqual(response_sem_username.status_code, 400)
+    self.assertIn("erro", response_sem_username.json())
+
+    # Tenta cadastrar sem o campo "nome"
+    data_sem_nome = {
+        "sobrenome": "Almeida",
+        "username": "carlosalmeida",
+        "senha": "senha123"
+    }
+    response_sem_nome = self.client.post(
+        reverse('cadastrar_usuario'),
+        data=data_sem_nome,
+        format='multipart'
+    )
+
+    self.assertEqual(response_sem_nome.status_code, 400)
+    self.assertIn("erro", response_sem_nome.json())
+
+
 
 class EventoTests(TestCase):
     def setUp(self):
         """Configuração inicial para os testes de Evento"""
         self.client = Client()
-
-        # Criando uma imagem em memória para simular o upload
-        image = BytesIO()
-        Image.new('RGB', (200, 200), color='blue').save(image, 'JPEG')
-        image.seek(0)
-        uploaded_image = SimpleUploadedFile("test_event_image.jpg", image.getvalue(), content_type="image/jpeg")
-
-    # Criando o evento com imagem e preço
-    self.evento = Evento.objects.create(
-        nome="Workshop Python",
-        data=date(2025, 1, 15),
-        horario=time(14, 30),
-        tipo="presencial",
-        local="Centro de Convenções",
-        link="https://evento.com",
-        descricao="Workshop sobre Python",
-        preco=50.00,  # Adicionando o preço
-        imagem=uploaded_image  # Adicionando a imagem
-    )
-
+        self.evento = Evento.objects.create(
+            nome="Workshop Python",
+            data=date(2025, 1, 15),
+            horario=time(14, 30),
+            tipo="presencial",
+            local="Centro de Convenções",
+            link="https://evento.com",
+            descricao="Workshop sobre Python"
+        )
 
     def test_cadastrar_evento_view(self):
         """Testa o endpoint de cadastro de evento"""
