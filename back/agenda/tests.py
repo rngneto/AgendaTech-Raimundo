@@ -267,6 +267,34 @@ def test_atualizar_usuario(self):
     self.assertEqual(usuario_atualizado.nome, "João Atualizado")
     self.assertEqual(usuario_atualizado.sobrenome, "Silva Atualizado")
 
+def test_buscar_usuario_por_nome(self):
+    """Testa a busca de usuários pelo nome"""
+
+    # Criar usuários adicionais para o teste
+    Usuario.objects.create(
+        nome="Maria",
+        sobrenome="Santos",
+        username="mariasantos",
+        senha="senha456"
+    )
+    Usuario.objects.create(
+        nome="João",
+        sobrenome="Almeida",
+        username="joaoalmeida",
+        senha="senha789"
+    )
+
+    # Buscar usuários com o nome "João"
+    usuarios = Usuario.objects.filter(nome="João")
+
+    # Verificar o número de usuários encontrados
+    self.assertEqual(len(usuarios), 2)
+
+    # Verificar os dados dos usuários encontrados
+    self.assertEqual(usuarios[0].nome, "João")
+    self.assertEqual(usuarios[1].nome, "João")
+
+
 
 class EventoTests(TestCase):
     def setUp(self):
