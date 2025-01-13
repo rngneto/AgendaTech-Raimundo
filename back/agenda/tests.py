@@ -405,7 +405,6 @@ class EventoTests(TestCase):
         # Verifica se a imagem foi salva com o prefixo correto
         self.assertTrue(evento_cadastrado.imagem.name.startswith("eventos/imagem-cortada"),
                         f"O nome da imagem salva não segue o padrão esperado: {evento_cadastrado.imagem.name}")
-
         
     def test_cadastrar_evento_sem_preco_sem_imagem_view(self):
         """Testa o endpoint de cadastro de evento"""
@@ -433,9 +432,7 @@ class EventoTests(TestCase):
 
         # Verificar se o evento foi criado corretamente
         self.assertEqual(response.status_code, 201)
-        self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
-
-    
+        self.assertTrue(Evento.objects.filter(nome="Curso Django").exists()) 
 
     def test_listar_eventos_view(self):
         """Testa o endpoint de listagem de eventos"""
@@ -455,6 +452,44 @@ class EventoTests(TestCase):
         data = json.loads(response.content)
         self.assertEqual(len(data['eventos']), 1)
         self.assertEqual(data['eventos'][0]['nome'], "Workshop Python")
+
+def test_detalhe_evento_view(self):
+    """Testa o endpoint de detalhes de um evento"""
+    # Evento existente criado no setUp
+    evento = self.evento
+
+    # Cenário 1: ID válido fornecido
+    response = self.client.get(reverse('detalhe_evento'), {'id': evento.id})
+    self.assertEqual(response.status_code, 200)
+    evento_data = response.json()
+
+    self.assertEqual(evento_data['id'], evento.id)
+    self.assertEqual(evento_data['nome'], evento.nome)
+    self.assertEqual(evento_data['data'], evento.data.strftime('%Y-%m-%d'))
+    self.assertEqual(evento_data['horario'], evento.horario.strftime('%H:%M'))
+    self.assertEqual(evento_data['tipo'], evento.tipo)
+    self.assertEqual(evento_data['local'], evento.local)
+    self.assertEqual(evento_data['link'], evento.link)
+    self.assertEqual(evento_data['descricao'], evento.descricao)
+    self.assertEqual(float(evento_data['preco']), float(evento.preco))
+    self.assertIsNotNone(evento_data['imagem'])
+
+    # Cenário 2: ID não fornecido
+    response_sem_id = self.client.get(reverse('detalhe_evento'))
+    self.assertEqual(response_sem_id.status_code, 400)
+    self.assertIn("erro", response_sem_id.json())
+    self.assertEqual(response_sem_id.json()["erro"], "ID do evento não fornecido.")
+
+    # Cenário 3: ID inexistente
+    response_id_inexistente = self.client.get(reverse('detalhe_evento'), {'id': 999})
+    self.assertEqual(response_id_inexistente.status_code, 404)
+    self.assertIn("erro", response_id_inexistente.json())
+
+
+
+
+
+
 
 
 class HomeViewTests(TestCase):
