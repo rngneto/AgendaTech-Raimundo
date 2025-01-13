@@ -66,25 +66,27 @@ class EventoTests(TestCase):
         """Testa o endpoint de cadastro de evento"""
         data = {
             "nome": "Curso Django",
-            "data": "2025-02-01",  # Formato YYYY-MM-DD
-            "horario": "15:00:00",  # Formato HH:MM:SS
+            "data": "2025-02-01",
+            "horario": "15:00:00",
             "tipo": "online",
             "local": "Zoom",
             "link": "https://zoom.com/meeting",
             "descricao": "Curso intensivo de Django",
-            "preco": "100.00"  # Deve ser uma string representando um número
+            "preco": "100.00"
         }
 
+        # Simular envio com 'multipart/form-data'
         response = self.client.post(
             reverse('cadastrar_evento'),
-            data=data,  # Não precisa de json.dumps pois request.POST espera um dicionário
-            content_type='application/x-www-form-urlencoded'  # Formato do formulário
+            data,  # Envio direto dos dados como dicionário
+            format="multipart"  # Especificar envio no formato multipart
         )
 
-        # Adicionado para depuração
+        # Depuração para verificar resposta do servidor
         print("Status Code:", response.status_code)
         print("Response Content:", response.content.decode())
 
+        # Verificar se o evento foi criado corretamente
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
 
