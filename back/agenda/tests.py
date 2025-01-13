@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.conf import settings
+from django.db import connection
 from .models import Usuario, Evento
 import json
 from datetime import date, time
@@ -656,7 +657,93 @@ class BackupTests(TestCase):
         if os.path.exists(self.temp_media_folder):
             shutil.rmtree(self.temp_media_folder)
     
+class LimparBDTests(TestCase):
+    def setUp(self):
+        """Configuração inicial para o teste de limpeza do banco de dados"""
+        self.client = Client()
 
+        # Criar usuários para teste
+        Usuario.objects.create(
+            nome="João",
+            sobrenome="Silva",
+            username="joaosilva",
+            senha="senha123"
+        )
+        Usuario.objects.create(
+            nome="Maria",
+            sobrenome="Santos",
+            username="mariasantos",
+            senha="senha456"
+        )
+
+        # Criar eventos para teste
+        image = BytesIO()
+        Image.new('RGB', (100, 100), color='blue').save(image, 'JPEG')
+        image.seek(0)
+        uploaded_image = SimpleUploadedFile("test_image.jpg", image.getvalue(), content_type="image/jpeg")
+
+        Evento.objects.create(
+            nome="Workshop Python",
+            data="2025-01-15",
+            horario="14:30:00",
+            tipo="presencial",
+            local="Centro de Convenções",
+            link="https://evento.com",
+            descricao="Workshop sobre Python",
+            preco=150.00,
+            imagem=uploaded_image
+        )
+
+        # Criar diretórios e arquivos de imagens para teste
+        self.eventos_path = os.path.join(settings.MEDIA_ROOT, 'eventos')
+        self.usuarios_path = os.path.join(settings.MEDIA_ROOT, 'usuarios')
+        os.makedirs(self.eventos_path, exist_ok=True)
+        os.makedirs(self.usuarios_path, exist_ok=True)
+
+        with open(os.path.join(self.eventos_path, 'test_event_image.jpg'), 'wb') as f:
+            f.write(b'test event image content')
+
+        with open(os.path.join(self.usuarios_path, 'test_user_image.jpg'), 'wb') as f:
+            f.write(b'test user image content')
+
+    def test_limpar_bd(self):
+        """Testa o endpoint de limpeza do banco de dados e imagens"""
+        response = self.client.post(reverse('limpar_bd'))
+
+        # Verificar resposta
+        self.assertEqual(response.status_code, 200, f"Erro: {response.content.decode()}")
+        self.assertIn("mensagem", response.json())
+        self.assertEqual(response.json()["mensagem"], "Banco de dados e arquivos limpos com sucesso!")
+
+        # Verificar se os registros no banco foram deletados
+        self.assertEqual(Usuario.objects.count(), 0, "Usuários não foram excluídos.")
+        self.assertEqual(Evento.objects.count(), 0, "Eventos não foram excluídos.")
+
+        # Verificar se as imagens foram deletadas
+        self.assertFalse(os.listdir(self.eventos_path), "Imagens de eventos não foram excluídas.")
+        self.assertFalse(os.listdir(self.usuarios_path), "Imagens de usuários não foram excluídas.")
+
+        # Verificar se as sequências foram reiniciadas
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT seq FROM sqlite_sequence WHERE name='agenda_usuario';")
+            usuario_sequence = cursor.fetchone()
+            cursor.execute("SELECT seq FROM sqlite_sequence WHERE name='agenda_evento';")
+            evento_sequence = cursor.fetchone()
+
+        self.assertIsNone(usuario_sequence, "Sequência de IDs de usuários não foi reiniciada.")
+        self.assertIsNone(evento_sequence, "Sequência de IDs de eventos não foi reiniciada.")
+
+    def tearDown(self):
+        """Limpeza após os testes"""
+        if os.path.exists(self.eventos_path):
+            for arquivo in os.listdir(self.eventos_path):
+                os.remove(os.path.join(self.eventos_path, arquivo))
+            os.rmdir(self.eventos_path)
+
+        if os.path.exists(self.usuarios_path):
+            for arquivo in os.listdir(self.usuarios_path):
+                os.remove(os.path.join(self.usuarios_path, arquivo))
+            os.rmdir(self.usuarios_path)
 
 
 
