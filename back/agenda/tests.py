@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.conf import settings
 from .models import Usuario, Evento
 import json
 from datetime import date, time
