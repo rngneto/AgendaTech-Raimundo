@@ -397,8 +397,6 @@ class EventoTests(TestCase):
             evento_cadastrado.imagem.name.startswith("eventos/imagem-cortada"),
             f"A imagem não foi salva com o prefixo correto: {evento_cadastrado.imagem.name}"
         )
-
-
     def test_cadastrar_evento_sem_preco_sem_imagem_view(self):
         """Testa o endpoint de cadastro de evento"""
         data = {
