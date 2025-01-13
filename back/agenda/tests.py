@@ -236,6 +236,20 @@ def test_listar_usuarios_json_view(self):
     self.assertEqual(usuarios_data[2]['nome'], "Mária")
     self.assertEqual(usuarios_data[2]['sobrenome'], "Oliveira")
 
+def test_excluir_usuario(self):
+    """Testa a exclusão de um usuário"""
+
+    # Verifica que o usuário existe antes da exclusão
+    usuario = Usuario.objects.get(username="joaosilva")
+    self.assertIsNotNone(usuario)
+
+    # Exclui o usuário
+    usuario.delete()
+
+    # Verifica que o usuário foi removido do banco de dados
+    self.assertFalse(Usuario.objects.filter(username="joaosilva").exists())
+
+
 
 class EventoTests(TestCase):
     def setUp(self):
