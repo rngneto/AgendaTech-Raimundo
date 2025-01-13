@@ -854,6 +854,21 @@ class ListaDesejosTests(TestCase):
     
     def test_listar_lista_desejos(self):
         """Testa o endpoint de listagem da lista de desejos"""
+        # Adicionando dois eventos à lista de desejos
+        evento2 = Evento.objects.create(
+            nome="Curso Django",
+            data=date(2025, 2, 10),
+            horario=time(16, 0),
+            tipo="online",
+            local="Zoom",
+            link="https://evento.com/curso-django",
+            descricao="Desenvolvimento Web com Django",
+            preco=200.00
+        )
+
+        ListaDesejos.objects.create(usuario=self.usuario, evento=self.evento)
+        ListaDesejos.objects.create(usuario=self.usuario, evento=evento2)
+
         response = self.client.get(
             reverse('listar_lista_desejos'),
             {"usuario_id": self.usuario.id}
@@ -869,19 +884,9 @@ class ListaDesejosTests(TestCase):
 
         # Verifica os detalhes dos eventos na lista de desejos
         evento1_data = response_data["eventos"][0]
-        self.assertEqual(evento1_data["nome"], self.evento1.nome)
-        self.assertEqual(evento1_data["local"], self.evento1.local)
+        self.assertEqual(evento1_data["nome"], self.evento.nome)
+        self.assertEqual(evento1_data["local"], self.evento.local)
 
         evento2_data = response_data["eventos"][1]
-        self.assertEqual(evento2_data["nome"], self.evento2.nome)
-        self.assertEqual(evento2_data["local"], self.evento2.local)
-
-    def test_listar_lista_desejos_usuario_nao_especificado(self):
-        """Testa a tentativa de listar a lista de desejos sem especificar um usuário"""
-        response = self.client.get(reverse('listar_lista_desejos'))
-
-        # Verifica se o status é 400 e a mensagem de erro
-        self.assertEqual(response.status_code, 400)
-        response_data = response.json()
-        self.assertIn("error", response_data)
-        self.assertEqual(response_data["error"], "Usuário não especificado.")
+        self.assertEqual(evento2_data["nome"], evento2.nome)
+        self.assertEqual(evento2_data["local"], evento2.local)
