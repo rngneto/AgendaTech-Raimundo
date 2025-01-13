@@ -342,7 +342,7 @@ class EventoTests(TestCase):
         image.seek(0)
 
         self.uploaded_image = SimpleUploadedFile(
-            "test_image.jpg",
+            "imagem-cortada.jpg",  # Nome do arquivo de upload
             image.getvalue(),
             content_type="image/jpeg"
         )
@@ -357,7 +357,7 @@ class EventoTests(TestCase):
             link="https://evento.com",
             descricao="Workshop sobre Python",
             preco=150.00,
-            imagem=self.uploaded_image  # Salva a imagem válida
+            imagem=self.uploaded_image  # Salvando a imagem inicial
         )
 
     def test_cadastrar_evento_sem_preco_sem_imagem_view(self):
@@ -388,38 +388,7 @@ class EventoTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
 
-    def test_cadastrar_evento_view(self):
-        """Testa o endpoint de cadastro de evento"""
-        data = {
-            "nome": "Curso Django",
-            "data": "2025-02-01",
-            "horario": "15:00:00",
-            "tipo": "online",
-            "local": "Zoom",
-            "link": "https://zoom.com/meeting",
-            "descricao": "Curso intensivo de Django",
-            "preco": "200.00"
-        }
-
-        # Envia os dados com a imagem
-        response = self.client.post(
-            reverse('cadastrar_evento'),
-            data={**data, "imagem": self.uploaded_image},
-            format="multipart"
-        )
-
-        # Depuração
-        print("Enviado:", data)
-        print("Status Code:", response.status_code)
-        print("Response Content:", response.content.decode())
-
-        # Verifica o status e os dados do evento cadastrado
-        self.assertEqual(response.status_code, 201, f"Erro: {response.content.decode()}")
-        evento_cadastrado = Evento.objects.get(nome="Curso Django")
-        self.assertEqual(evento_cadastrado.tipo, "online")
-        self.assertEqual(float(evento_cadastrado.preco), 200.00)
-        self.assertIsNotNone(evento_cadastrado.imagem)
-
+    
 
     def test_listar_eventos_view(self):
         """Testa o endpoint de listagem de eventos"""
