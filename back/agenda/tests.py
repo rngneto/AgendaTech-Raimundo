@@ -360,6 +360,45 @@ class EventoTests(TestCase):
             imagem=self.uploaded_image  # Salvando a imagem inicial
         )
 
+    def test_cadastrar_evento_view(self):
+        """Testa o endpoint de cadastro de evento"""
+        data = {
+            "nome": "Curso Django",
+            "data": "2025-02-01",
+            "horario": "15:00:00",
+            "tipo": "online",
+            "local": "Zoom",
+            "link": "https://zoom.com/meeting",
+            "descricao": "Curso intensivo de Django",
+            "preco": "200.00"
+        }
+
+        # Envia os dados com a imagem
+        response = self.client.post(
+            reverse('cadastrar_evento'),
+            data={**data, "imagem": self.uploaded_image},
+            format="multipart"
+        )
+
+        # Depuração
+        print("Status Code:", response.status_code)
+        print("Response Content:", response.content.decode())
+
+        # Verifica o status da resposta
+        self.assertEqual(response.status_code, 201, f"Erro: {response.content.decode()}")
+
+        # Verifica se o evento foi criado
+        evento_cadastrado = Evento.objects.get(nome="Curso Django")
+        self.assertEqual(evento_cadastrado.tipo, "online")
+        self.assertEqual(float(evento_cadastrado.preco), 200.00)
+
+        # Verifica se a imagem foi salva com o prefixo correto
+        self.assertTrue(
+            evento_cadastrado.imagem.name.startswith("eventos/imagem-cortada"),
+            f"A imagem não foi salva com o prefixo correto: {evento_cadastrado.imagem.name}"
+        )
+
+
     def test_cadastrar_evento_sem_preco_sem_imagem_view(self):
         """Testa o endpoint de cadastro de evento"""
         data = {
