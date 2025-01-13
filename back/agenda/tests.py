@@ -7,7 +7,6 @@ from io import BytesIO
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-
 class UsuarioTests(TestCase):
     def setUp(self):
         """Configuração inicial para os testes de Usuario"""
@@ -52,7 +51,7 @@ class UsuarioTests(TestCase):
         self.assertIn("erro", response.json())
         self.assertEqual(response.json()["erro"], "Nome de usuário já existe.")
 
-    def test_listar_usuarios_view(self):
+    def test_listar_usuario_view(self):
         """Testa o endpoint de listagem de usuários"""
         response = self.client.get(reverse('listar_usuarios'))
         self.assertEqual(response.status_code, 200)
@@ -100,6 +99,41 @@ def test_criar_usuario_imagem(self):
     self.assertEqual(usuario.username, "mariasantos")
     self.assertIsNotNone(usuario.imagem, "A imagem deveria estar salva no banco de dados.")
     self.assertTrue(usuario.imagem.name.startswith("usuarios/"), "A imagem não foi salva no diretório correto.")
+    
+    def test_listar_usuarios_view(self):
+        """Testa o endpoint de listagem de todos os usuários"""
+
+        # Criar múltiplos usuários para o teste
+        Usuario.objects.create(
+            nome="Maria",
+            sobrenome="Santos",
+            username="mariasantos",
+            senha="senha456"
+        )
+        Usuario.objects.create(
+            nome="Carlos",
+            sobrenome="Almeida",
+            username="carlosalmeida",
+            senha="senha789"
+        )
+
+        # Requisição para listar todos os usuários
+        response = self.client.get(reverse('listar_usuarios'))
+        self.assertEqual(response.status_code, 200)
+        usuarios = json.loads(response.content)
+        
+        # Certificar-se de que todos os usuários foram retornados
+        self.assertEqual(len(usuarios), 3)  # Incluindo o usuário criado no setUp
+        self.assertEqual(usuarios[0]['nome'], "João")
+        self.assertEqual(usuarios[1]['nome'], "Maria")
+        self.assertEqual(usuarios[2]['nome'], "Carlos")
+
+    
+    
+    
+    
+    
+    
 
 class EventoTests(TestCase):
     def setUp(self):
