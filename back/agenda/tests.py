@@ -100,7 +100,7 @@ def test_criar_usuario_imagem(self):
     self.assertIsNotNone(usuario.imagem, "A imagem deveria estar salva no banco de dados.")
     self.assertTrue(usuario.imagem.name.startswith("usuarios/"), "A imagem não foi salva no diretório correto.")
     
-    def test_listar_usuarios_view(self):
+def test_listar_usuarios_view(self):
         """Testa o endpoint de listagem de todos os usuários"""
 
         # Criar múltiplos usuários para o teste
