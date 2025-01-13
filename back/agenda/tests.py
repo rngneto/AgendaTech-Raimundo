@@ -249,6 +249,23 @@ def test_excluir_usuario(self):
     # Verifica que o usuário foi removido do banco de dados
     self.assertFalse(Usuario.objects.filter(username="joaosilva").exists())
 
+def test_atualizar_usuario(self):
+    """Testa a atualização dos dados de um usuário"""
+
+    # Busca o usuário existente
+    usuario = Usuario.objects.get(username="joaosilva")
+
+    # Atualiza os dados do usuário
+    usuario.nome = "João Atualizado"
+    usuario.sobrenome = "Silva Atualizado"
+    usuario.save()
+
+    # Busca novamente o usuário atualizado
+    usuario_atualizado = Usuario.objects.get(username="joaosilva")
+
+    # Verifica se os dados foram atualizados corretamente
+    self.assertEqual(usuario_atualizado.nome, "João Atualizado")
+    self.assertEqual(usuario_atualizado.sobrenome, "Silva Atualizado")
 
 
 class EventoTests(TestCase):
