@@ -328,30 +328,95 @@ class UsuarioTests(TestCase):
         self.assertIn("erro", response_sem_nome.json())
 
 class EventoTests(TestCase):
-    
-     def setUp(self):
+    def setUp(self):
         """Configuração inicial para os testes de Evento"""
         self.client = Client()
 
         # Criando uma imagem em memória para simular o upload
         image = BytesIO()
-        Image.new('RGB', (100, 100), color='blue').save(image, 'JPEG')
+        Image.new('RGB', (200, 200), color='blue').save(image, 'JPEG')
         image.seek(0)
         uploaded_image = SimpleUploadedFile("test_event_image.jpg", image.getvalue(), content_type="image/jpeg")
 
-        # Criando o evento com imagem e preço
-        self.evento = Evento.objects.create(
-            nome="Workshop Python",
-            data=date(2025, 1, 15),
-            horario=time(14, 30),
-            tipo="presencial",
-            local="Centro de Convenções",
-            link="https://evento.com",
-            descricao="Workshop sobre Python",
-            preco=50.00,  # Adicionando o preço
-            imagem=uploaded_image  # Adicionando a imagem
+    # Criando o evento com imagem e preço
+    self.evento = Evento.objects.create(
+        nome="Workshop Python",
+        data=date(2025, 1, 15),
+        horario=time(14, 30),
+        tipo="presencial",
+        local="Centro de Convenções",
+        link="https://evento.com",
+        descricao="Workshop sobre Python",
+        preco=50.00,  # Adicionando o preço
+        imagem=uploaded_image  # Adicionando a imagem
+    )
+
+    def test_cadastrar_evento_view(self):
+        """Testa o endpoint de cadastro de evento com e sem envio de imagem"""
+
+        # Criando uma imagem em memória para simular o upload
+        image = BytesIO()
+        Image.new('RGB', (200, 200), color='blue').save(image, 'JPEG')
+        image.seek(0)
+        uploaded_image = SimpleUploadedFile("test_event_image.jpg", image.getvalue(), content_type="image/jpeg")
+
+        # Dados para o evento
+        data_com_imagem = {
+            "nome": "Curso Django com Imagem",
+            "data": "2025-02-01",
+            "horario": "15:00:00",
+            "tipo": "online",
+            "local": "Zoom",
+            "link": "https://zoom.com/meeting",
+            "descricao": "Curso intensivo de Django com imagem",
+            "preco": "150.00",
+            "imagem": uploaded_image  # Incluindo a imagem
+        }
+
+        # Envio com imagem
+        response_com_imagem = self.client.post(
+            reverse('cadastrar_evento'),
+            data=data_com_imagem,
+            format="multipart"  # Necessário para envio de arquivos
         )
 
+        # Depuração para verificar resposta do servidor
+        print("Status Code com Imagem:", response_com_imagem.status_code)
+        print("Response Content com Imagem:", response_com_imagem.content.decode())
+
+        # Verificações para o evento com imagem
+        self.assertEqual(response_com_imagem.status_code, 201)
+        evento = Evento.objects.get(nome="Curso Django com Imagem")
+        self.assertIsNotNone(evento.imagem, "A imagem deveria estar salva no banco de dados.")
+        self.assertTrue(evento.imagem.name.startswith("usuarios/"), "A imagem não foi salva no diretório correto.")
+
+        # Dados para o evento sem imagem
+        data_sem_imagem = {
+            "nome": "Curso Django sem Imagem",
+            "data": "2025-03-01",
+            "horario": "16:00:00",
+            "tipo": "presencial",
+            "local": "Auditório",
+            "link": "https://zoom.com/no-image",
+            "descricao": "Curso intensivo de Django sem imagem",
+            "preco": "100.00"
+        }
+
+        # Envio sem imagem
+        response_sem_imagem = self.client.post(
+            reverse('cadastrar_evento'),
+            data=data_sem_imagem,
+            format="multipart"
+        )
+
+        # Depuração para verificar resposta do servidor
+        print("Status Code sem Imagem:", response_sem_imagem.status_code)
+        print("Response Content sem Imagem:", response_sem_imagem.content.decode())
+
+        # Verificações para o evento sem imagem
+        self.assertEqual(response_sem_imagem.status_code, 201)
+        evento_sem_imagem = Evento.objects.get(nome="Curso Django sem Imagem")
+        self.assertIsNone(evento_sem_imagem.imagem, "A imagem deveria ser None quando não enviada.")
 
 
     def test_listar_eventos_view(self):
