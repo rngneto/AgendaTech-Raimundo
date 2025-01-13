@@ -294,6 +294,39 @@ def test_buscar_usuario_por_nome(self):
     self.assertEqual(usuarios[0].nome, "João")
     self.assertEqual(usuarios[1].nome, "João")
 
+def test_cadastrar_usuario_dados_invalidos(self):
+    """Testa o cadastro de usuário com dados inválidos"""
+
+    # Tenta cadastrar sem o campo "username"
+    data_sem_username = {
+        "nome": "Carlos",
+        "sobrenome": "Almeida",
+        "senha": "senha123"
+    }
+    response_sem_username = self.client.post(
+        reverse('cadastrar_usuario'),
+        data=data_sem_username,
+        format='multipart'
+    )
+
+    self.assertEqual(response_sem_username.status_code, 400)
+    self.assertIn("erro", response_sem_username.json())
+
+    # Tenta cadastrar sem o campo "nome"
+    data_sem_nome = {
+        "sobrenome": "Almeida",
+        "username": "carlosalmeida",
+        "senha": "senha123"
+    }
+    response_sem_nome = self.client.post(
+        reverse('cadastrar_usuario'),
+        data=data_sem_nome,
+        format='multipart'
+    )
+
+    self.assertEqual(response_sem_nome.status_code, 400)
+    self.assertIn("erro", response_sem_nome.json())
+
 
 
 class EventoTests(TestCase):
