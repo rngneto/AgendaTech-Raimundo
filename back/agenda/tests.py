@@ -197,6 +197,45 @@ def test_login_usuario(self):
     self.assertEqual(response_metodo_nao_permitido.status_code, 405)
     self.assertEqual(response_metodo_nao_permitido.json()["erro"], "Método não permitido")
 
+def test_listar_usuarios_json_view(self):
+    """Testa o endpoint de listagem de todos os usuários em formato JSON"""
+
+    # Criação de usuários adicionais com caracteres especiais no nome
+    Usuario.objects.create(
+        nome="José",
+        sobrenome="da Silva",
+        username="jose.silva",
+        senha="senha123"
+    )
+    Usuario.objects.create(
+        nome="Mária",
+        sobrenome="Oliveira",
+        username="maria.oliveira",
+        senha="senha456"
+    )
+
+    # Requisição para o endpoint
+    response = self.client.get(reverse('listar_usuarios_json'))
+
+    # Verifica se o status da resposta é 200 (OK)
+    self.assertEqual(response.status_code, 200)
+
+    # Converte o conteúdo da resposta em JSON
+    usuarios_data = response.json()
+
+    # Verifica se o número de usuários está correto
+    self.assertEqual(len(usuarios_data), 3)  # Inclui o usuário criado no setUp
+
+    # Verifica os dados dos usuários
+    self.assertEqual(usuarios_data[0]['nome'], "João")
+    self.assertEqual(usuarios_data[0]['sobrenome'], "Silva")
+
+    self.assertEqual(usuarios_data[1]['nome'], "José")
+    self.assertEqual(usuarios_data[1]['sobrenome'], "da Silva")
+
+    self.assertEqual(usuarios_data[2]['nome'], "Mária")
+    self.assertEqual(usuarios_data[2]['sobrenome'], "Oliveira")
+
 
 class EventoTests(TestCase):
     def setUp(self):
