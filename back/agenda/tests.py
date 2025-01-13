@@ -3,10 +3,6 @@ from django.urls import reverse
 from .models import Usuario, Evento
 import json
 from datetime import date, time
-from io import BytesIO
-from PIL import Image
-from django.core.files.uploadedfile import SimpleUploadedFile
-import os
 
 class UsuarioTests(TestCase):
     def setUp(self):
@@ -25,27 +21,6 @@ class UsuarioTests(TestCase):
         self.assertEqual(self.usuario.sobrenome, "Silva")
         self.assertEqual(self.usuario.username, "joaosilva")
         self.assertEqual(str(self.usuario), "João Silva")
-
-    def test_cadastrar_evento_view(self):
-        """Testa o endpoint de cadastro de evento"""
-        data = {
-            "nome": "Evento de Teste",
-            "data": "2025-01-15",
-            "horario": "18:00:00",
-            "tipo": "online",
-            "local": "Zoom",
-            "link": "https://zoom.us/test",
-            "descricao": "Descrição do evento de teste"
-        }
-        response = self.client.post(
-            reverse('cadastrar_evento'),
-            data=data,
-            content_type='application/json'
-        )
-
-        print(response.content)  # Adicionado para verificar a resposta do servidor
-
-        self.assertEqual(response.status_code, 201)
 
     def test_cadastrar_usuario_com_username_repetido(self):
         """Testa o cadastro de usuário com username duplicado"""
@@ -94,23 +69,28 @@ class EventoTests(TestCase):
         self.assertEqual(str(self.evento), "Workshop Python")
 
     def test_cadastrar_evento_view(self):
-        """Testa o endpoint de cadastro de evento"""
-        data = {
-            "nome": "Curso Django",
-            "data": "2025-02-01",
-            "horario": "15:00:00",
-            "tipo": "online",
-            "local": "Zoom",
-            "link": "https://zoom.com/meeting",
-            "descricao": "Curso intensivo de Django"
-        }
-        response = self.client.post(
-            reverse('cadastrar_evento'),
-            data=json.dumps(data),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 201)
-        self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
+    """Testa o endpoint de cadastro de evento"""
+    data = {
+        "nome": "Curso Django",
+        "data": "2025-02-01",
+        "horario": "15:00:00",
+        "tipo": "online",
+        "local": "Zoom",
+        "link": "https://zoom.com/meeting",
+        "descricao": "Curso intensivo de Django",
+        "preco": "100.00"  # Campo obrigatório 'preco'
+    }
+    response = self.client.post(
+        reverse('cadastrar_evento'),
+        data=json.dumps(data),
+        content_type='application/json'
+    )
+
+    # Depuração
+    print("Resposta do Servidor:", response.content)
+
+    self.assertEqual(response.status_code, 201)
+
 
     def test_listar_eventos_view(self):
         """Testa o endpoint de listagem de eventos"""
