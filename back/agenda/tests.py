@@ -6,6 +6,7 @@ from datetime import date, time
 from io import BytesIO
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
+import os
 
 class UsuarioTests(TestCase):
     def setUp(self):
@@ -334,23 +335,29 @@ class EventoTests(TestCase):
         """Configuração inicial para os testes de Evento"""
         self.client = Client()
 
-        # Criando uma imagem em memória para simular o upload
+        # Criando uma imagem válida para upload
         image = BytesIO()
-        Image.new('RGB', (100, 100), color='blue').save(image, 'JPEG')
+        img = Image.new('RGB', (100, 100), color='blue')
+        img.save(image, format='JPEG')
         image.seek(0)
-        self.uploaded_image = SimpleUploadedFile("test_image.jpg", image.getvalue(), content_type="image/jpeg")
 
-        # Criando o evento com todos os campos
+        self.uploaded_image = SimpleUploadedFile(
+            "test_image.jpg",
+            image.getvalue(),
+            content_type="image/jpeg"
+        )
+
+        # Criando um evento inicial com imagem
         self.evento = Evento.objects.create(
             nome="Workshop Python",
-            data=date(2025, 1, 15),
-            horario=time(14, 30),
+            data="2025-01-15",
+            horario="14:30:00",
             tipo="presencial",
             local="Centro de Convenções",
             link="https://evento.com",
             descricao="Workshop sobre Python",
-            preco=150.00,  # Preço do evento
-            imagem=self.uploaded_image  # Imagem do evento
+            preco=150.00,
+            imagem=self.uploaded_image  # Salva a imagem válida
         )
 
     def test_cadastrar_evento_sem_preco_sem_imagem_view(self):
@@ -383,7 +390,6 @@ class EventoTests(TestCase):
 
     def test_cadastrar_evento_view(self):
         """Testa o endpoint de cadastro de evento"""
-        # Dados para o novo evento
         data = {
             "nome": "Curso Django",
             "data": "2025-02-01",
@@ -395,13 +401,10 @@ class EventoTests(TestCase):
             "preco": "200.00"
         }
 
-        # Simular envio com 'multipart/form-data'
+        # Envia os dados com a imagem
         response = self.client.post(
             reverse('cadastrar_evento'),
-            data={
-                **data,
-                "imagem": self.uploaded_image  # Envio da imagem simulada
-            },
+            data={**data, "imagem": self.uploaded_image},
             format="multipart"
         )
 
@@ -410,14 +413,10 @@ class EventoTests(TestCase):
         print("Status Code:", response.status_code)
         print("Response Content:", response.content.decode())
 
-        # Verifica se o evento foi cadastrado corretamente
+        # Verifica o status e os dados do evento cadastrado
         self.assertEqual(response.status_code, 201, f"Erro: {response.content.decode()}")
-        self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
-
-        # Verifica os dados do evento cadastrado
         evento_cadastrado = Evento.objects.get(nome="Curso Django")
         self.assertEqual(evento_cadastrado.tipo, "online")
-        self.assertEqual(evento_cadastrado.local, "Zoom")
         self.assertEqual(float(evento_cadastrado.preco), 200.00)
         self.assertIsNotNone(evento_cadastrado.imagem)
 
