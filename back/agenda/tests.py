@@ -485,6 +485,95 @@ def test_detalhe_evento_view(self):
     self.assertEqual(response_id_inexistente.status_code, 404)
     self.assertIn("erro", response_id_inexistente.json())
 
+def test_editar_perfil(self):
+    """Testa o endpoint de edição de perfil do usuário"""
+
+    # Cenário 1: Atualização bem-sucedida
+    data_atualizacao_sucesso = {
+        "username": "joaosilva",
+        "nome": "João Atualizado",
+        "sobrenome": "Silva Atualizado",
+        "novo_username": "joao_atualizado"
+    }
+    response_sucesso = self.client.post(
+        reverse('editar_perfil'),
+        data=json.dumps(data_atualizacao_sucesso),
+        content_type='application/json'
+    )
+    self.assertEqual(response_sucesso.status_code, 200)
+    response_data = response_sucesso.json()
+    self.assertEqual(response_data["mensagem"], "Perfil atualizado com sucesso!")
+    self.assertEqual(response_data["usuario"]["nome"], "João Atualizado")
+    self.assertEqual(response_data["usuario"]["sobrenome"], "Silva Atualizado")
+    self.assertEqual(response_data["usuario"]["username"], "joao_atualizado")
+
+    # Verifica se os dados foram salvos no banco
+    usuario = Usuario.objects.get(username="joao_atualizado")
+    self.assertEqual(usuario.nome, "João Atualizado")
+    self.assertEqual(usuario.sobrenome, "Silva Atualizado")
+
+    # Cenário 2: Nome de usuário não fornecido
+    data_sem_username = {
+        "nome": "Carlos"
+    }
+    response_sem_username = self.client.post(
+        reverse('editar_perfil'),
+        data=json.dumps(data_sem_username),
+        content_type='application/json'
+    )
+    self.assertEqual(response_sem_username.status_code, 400)
+    self.assertIn("erro", response_sem_username.json())
+    self.assertEqual(response_sem_username.json()["erro"], "Nome de usuário não fornecido.")
+
+    # Cenário 3: Usuário não encontrado
+    data_usuario_inexistente = {
+        "username": "usuario_inexistente",
+        "nome": "Carlos"
+    }
+    response_usuario_inexistente = self.client.post(
+        reverse('editar_perfil'),
+        data=json.dumps(data_usuario_inexistente),
+        content_type='application/json'
+    )
+    self.assertEqual(response_usuario_inexistente.status_code, 404)
+    self.assertIn("erro", response_usuario_inexistente.json())
+    self.assertEqual(response_usuario_inexistente.json()["erro"], "Usuário não encontrado.")
+
+    # Cenário 4: Novo username já está em uso
+    Usuario.objects.create(
+        nome="Maria",
+        sobrenome="Santos",
+        username="mariasantos",
+        senha="senha456"
+    )
+    data_username_em_uso = {
+        "username": "joao_atualizado",
+        "novo_username": "mariasantos"
+    }
+    response_username_em_uso = self.client.post(
+        reverse('editar_perfil'),
+        data=json.dumps(data_username_em_uso),
+        content_type='application/json'
+    )
+    self.assertEqual(response_username_em_uso.status_code, 400)
+    self.assertIn("erro", response_username_em_uso.json())
+    self.assertEqual(response_username_em_uso.json()["erro"], "Nome de usuário já está em uso.")
+
+    # Cenário 5: Dados inválidos no body
+    response_dados_invalidos = self.client.post(
+        reverse('editar_perfil'),
+        data="dados inválidos",
+        content_type='application/json'
+    )
+    self.assertEqual(response_dados_invalidos.status_code, 400)
+    self.assertIn("erro", response_dados_invalidos.json())
+    self.assertEqual(response_dados_invalidos.json()["erro"], "Dados enviados em formato inválido.")
+
+    # Cenário 6: Método não permitido
+    response_metodo_nao_permitido = self.client.get(reverse('editar_perfil'))
+    self.assertEqual(response_metodo_nao_permitido.status_code, 405)
+    self.assertIn("erro", response_metodo_nao_permitido.json())
+    self.assertEqual(response_metodo_nao_permitido.json()["erro"], "Método não permitido.")
 
 
 
