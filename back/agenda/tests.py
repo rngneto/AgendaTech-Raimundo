@@ -338,7 +338,7 @@ class EventoTests(TestCase):
         image = BytesIO()
         Image.new('RGB', (100, 100), color='blue').save(image, 'JPEG')
         image.seek(0)
-        uploaded_image = SimpleUploadedFile("test_image.jpg", image.getvalue(), content_type="image/jpeg")
+        self.uploaded_image = SimpleUploadedFile("test_image.jpg", image.getvalue(), content_type="image/jpeg")
 
         # Criando o evento com todos os campos
         self.evento = Evento.objects.create(
@@ -350,7 +350,7 @@ class EventoTests(TestCase):
             link="https://evento.com",
             descricao="Workshop sobre Python",
             preco=150.00,  # Preço do evento
-            imagem=uploaded_image  # Imagem do evento
+            imagem=self.uploaded_image  # Imagem do evento
         )
 
     def test_cadastrar_evento_sem_preco_sem_imagem_view(self):
@@ -380,7 +380,7 @@ class EventoTests(TestCase):
         # Verificar se o evento foi criado corretamente
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
-        
+
     def test_cadastrar_evento_view(self):
         """Testa o endpoint de cadastro de evento"""
         # Dados para o novo evento
@@ -414,7 +414,12 @@ class EventoTests(TestCase):
         self.assertEqual(evento_cadastrado.tipo, "online")
         self.assertEqual(evento_cadastrado.local, "Zoom")
         self.assertEqual(float(evento_cadastrado.preco), 200.00)
-        self.assertIsNotNone(evento_cadastrado.imagem)        
+        self.assertIsNotNone(evento_cadastrado.imagem)
+
+
+
+
+
 
     def test_listar_eventos_view(self):
         """Testa o endpoint de listagem de eventos"""
