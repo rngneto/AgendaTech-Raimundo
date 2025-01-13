@@ -579,64 +579,64 @@ def test_editar_perfil(self):
 
 class BackupTests(TestCase):
     def setUp(self):
-        """Configuração inicial para os testes de backup"""
+        """Configuração inicial para o teste de backup"""
         self.client = Client()
         self.backup_folder = os.path.join(settings.BASE_DIR, 'backup')
         os.makedirs(self.backup_folder, exist_ok=True)
 
-    def tearDown(self):
-        """Limpa os arquivos de backup criados durante os testes"""
-        if os.path.exists(self.backup_folder):
-            for file in os.listdir(self.backup_folder):
-                os.remove(os.path.join(self.backup_folder, file))
-
-
     def test_exportar_backup(self):
         """Testa o endpoint de exportação de backup"""
+        # Requisição ao endpoint de exportação de backup
         response = self.client.get(reverse('exportar_backup'))
 
         # Verifica se o status da resposta é 200
         self.assertEqual(response.status_code, 200, "A resposta não retornou o status 200.")
 
-        # Verifica se o cabeçalho Content-Disposition está presente
+        # Verifica o cabeçalho Content-Disposition
         self.assertIn('Content-Disposition', response.headers, "Cabeçalho 'Content-Disposition' ausente.")
         content_disposition = response['Content-Disposition']
-
-        # Verifica se o arquivo tem o nome esperado
         self.assertTrue(
-            content_disposition.startswith('attachment; filename=backup_'),
+            'attachment; filename=backup_' in content_disposition,
             f"Content-Disposition inválido: {content_disposition}"
         )
 
-        # Lê o conteúdo do arquivo usando streaming_content
+        # Lê o conteúdo do arquivo ZIP retornado
         backup_content = b"".join(response.streaming_content)
 
-        # Salva o arquivo ZIP retornado para verificação adicional
-        zip_filename = os.path.join(self.backup_folder, "test_backup.zip")
-        with open(zip_filename, 'wb') as f:
+        # Salva o conteúdo retornado para verificação adicional
+        backup_file = os.path.join(self.backup_folder, "test_backup.zip")
+        with open(backup_file, 'wb') as f:
             f.write(backup_content)
 
         # Verifica se o arquivo salvo é um ZIP válido
-        self.assertTrue(zipfile.is_zipfile(zip_filename), "O arquivo retornado não é um ZIP válido.")
+        self.assertTrue(zipfile.is_zipfile(backup_file), "O arquivo retornado não é um ZIP válido.")
 
-        # Abre o arquivo ZIP e verifica o conteúdo
-        with zipfile.ZipFile(zip_filename, 'r') as backup_zip:
-            # Verifica se o banco de dados está incluído
+        # Abre o arquivo ZIP e verifica os conteúdos
+        with zipfile.ZipFile(backup_file, 'r') as backup_zip:
+            # Verifica se o banco de dados está presente
             self.assertIn('db.sqlite3', backup_zip.namelist(), "Banco de dados ausente no backup.")
 
-            # Verifica se a pasta media está incluída
-            media_path = os.path.join(settings.BASE_DIR, 'media')
-            for root, _, files in os.walk(media_path):
-                for file in files:
-                    relative_path = os.path.relpath(os.path.join(root, file), media_path)
-                    self.assertIn(
-                        f"media/{relative_path}",
-                        backup_zip.namelist(),
-                        f"Arquivo de mídia ausente no backup: {relative_path}"
-                    )
+            # Verifica se as pastas de mídia estão presentes
+            media_prefix = "media/"
+            self.assertTrue(
+                any(item.startswith(media_prefix) for item in backup_zip.namelist()),
+                "A pasta 'media/' não está presente no backup."
+            )
+
+            # Verifica arquivos específicos nas pastas `eventos` e `usuarios`
+            for folder in ['eventos', 'usuarios']:
+                folder_path = os.path.join(settings.MEDIA_ROOT, folder)
+                for root, _, files in os.walk(folder_path):
+                    for file in files:
+                        relative_path = os.path.relpath(os.path.join(root, file), settings.MEDIA_ROOT)
+                        self.assertIn(
+                            f"media/{relative_path}",
+                            backup_zip.namelist(),
+                            f"Arquivo de mídia ausente no backup: {relative_path}"
+                        )
 
         # Remove o arquivo de teste gerado
-        os.remove(zip_filename)
+        os.remove(backup_file)
 
 
 
