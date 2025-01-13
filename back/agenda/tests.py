@@ -590,12 +590,13 @@ class BackupTests(TestCase):
             for file in os.listdir(self.backup_folder):
                 os.remove(os.path.join(self.backup_folder, file))
 
+
     def test_exportar_backup(self):
         """Testa o endpoint de exportação de backup"""
         response = self.client.get(reverse('exportar_backup'))
 
         # Verifica se o status da resposta é 200
-        self.assertEqual(response.status_code, 200, f"Erro: {response.content.decode()}")
+        self.assertEqual(response.status_code, 200, "A resposta não retornou o status 200.")
 
         # Verifica se o cabeçalho Content-Disposition está presente
         self.assertIn('Content-Disposition', response.headers, "Cabeçalho 'Content-Disposition' ausente.")
@@ -607,10 +608,13 @@ class BackupTests(TestCase):
             f"Content-Disposition inválido: {content_disposition}"
         )
 
+        # Lê o conteúdo do arquivo usando streaming_content
+        backup_content = b"".join(response.streaming_content)
+
         # Salva o arquivo ZIP retornado para verificação adicional
         zip_filename = os.path.join(self.backup_folder, "test_backup.zip")
         with open(zip_filename, 'wb') as f:
-            f.write(response.content)
+            f.write(backup_content)
 
         # Verifica se o arquivo salvo é um ZIP válido
         self.assertTrue(zipfile.is_zipfile(zip_filename), "O arquivo retornado não é um ZIP válido.")
@@ -633,6 +637,7 @@ class BackupTests(TestCase):
 
         # Remove o arquivo de teste gerado
         os.remove(zip_filename)
+
 
 
 
