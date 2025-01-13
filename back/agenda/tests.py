@@ -3,17 +3,30 @@ from django.urls import reverse
 from .models import Usuario, Evento
 import json
 from datetime import date, time
+from io import BytesIO
+from PIL import Image
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 
 class UsuarioTests(TestCase):
     def setUp(self):
         """Configuração inicial para os testes de Usuario"""
         self.client = Client()
+
+        # Criando uma imagem em memória para simular o upload
+        image = BytesIO()
+        Image.new('RGB', (100, 100), color='blue').save(image, 'JPEG')
+        image.seek(0)
+        uploaded_image = SimpleUploadedFile("test_image.jpg", image.getvalue(), content_type="image/jpeg")
+
+        # Criando o usuário com uma imagem
         self.usuario = Usuario.objects.create(
             nome="João",
             sobrenome="Silva",
             username="joaosilva",
-            senha="senha123"
-        )
+            senha="senha123",
+            imagem=uploaded_image
+    )
 
     def test_criar_usuario(self):
         """Testa a criação de um usuário"""
