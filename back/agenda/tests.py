@@ -405,8 +405,13 @@ class EventoTests(TestCase):
             format="multipart"
         )
 
+        # Depuração
+        print("Enviado:", data)
+        print("Status Code:", response.status_code)
+        print("Response Content:", response.content.decode())
+
         # Verifica se o evento foi cadastrado corretamente
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, f"Erro: {response.content.decode()}")
         self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
 
         # Verifica os dados do evento cadastrado
@@ -415,6 +420,7 @@ class EventoTests(TestCase):
         self.assertEqual(evento_cadastrado.local, "Zoom")
         self.assertEqual(float(evento_cadastrado.preco), 200.00)
         self.assertIsNotNone(evento_cadastrado.imagem)
+
 
 
 
