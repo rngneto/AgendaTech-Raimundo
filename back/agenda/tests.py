@@ -7,6 +7,7 @@ from io import BytesIO
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
+import zipfile
 
 class UsuarioTests(TestCase):
     def setUp(self):
@@ -575,7 +576,51 @@ def test_editar_perfil(self):
     self.assertIn("erro", response_metodo_nao_permitido.json())
     self.assertEqual(response_metodo_nao_permitido.json()["erro"], "Método não permitido.")
 
+class BackupTests(TestCase):
+    def setUp(self):
+        """Configuração inicial para os testes de backup"""
+        self.client = Client()
+        self.backup_folder = os.path.join(settings.BASE_DIR, 'backup')
+        os.makedirs(self.backup_folder, exist_ok=True)
 
+    def tearDown(self):
+        """Limpa os arquivos de backup criados durante os testes"""
+        if os.path.exists(self.backup_folder):
+            for file in os.listdir(self.backup_folder):
+                os.remove(os.path.join(self.backup_folder, file))
+
+    def test_exportar_backup(self):
+        """Testa o endpoint de exportação de backup"""
+        response = self.client.get(reverse('exportar_backup'))
+
+        # Verifica o status da resposta
+        self.assertEqual(response.status_code, 200)
+
+        # Verifica se o arquivo ZIP foi retornado
+        self.assertEqual(response['Content-Type'], 'application/zip')
+        self.assertTrue(response['Content-Disposition'].startswith('attachment; filename=backup_'))
+
+        # Salva o arquivo ZIP retornado
+        zip_filename = os.path.join(self.backup_folder, "test_backup.zip")
+        with open(zip_filename, 'wb') as f:
+            f.write(response.content)
+
+        # Verifica se o arquivo ZIP está correto
+        self.assertTrue(zipfile.is_zipfile(zip_filename))
+
+        # Abre o arquivo ZIP e verifica os conteúdos
+        with zipfile.ZipFile(zip_filename, 'r') as backup_zip:
+            # Verifica se o banco de dados está incluído
+            self.assertIn('db.sqlite3', backup_zip.namelist())
+
+            # Verifica se a pasta media está incluída
+            for root, dirs, files in os.walk(os.path.join(settings.BASE_DIR, 'media')):
+                for file in files:
+                    file_path = os.path.relpath(os.path.join(root, file), settings.BASE_DIR)
+                    self.assertIn(file_path, backup_zip.namelist())
+
+        # Remove o arquivo de teste gerado
+        os.remove(zip_filename)
 
 
 
