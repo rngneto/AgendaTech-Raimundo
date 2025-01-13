@@ -128,12 +128,75 @@ def test_listar_usuarios_view(self):
         self.assertEqual(usuarios[1]['nome'], "Maria")
         self.assertEqual(usuarios[2]['nome'], "Carlos")
 
-    
-    
-    
-    
-    
-    
+def test_login_usuario(self):
+    """Testa o endpoint de login de um usuário"""
+
+    # Cenário 1: Login bem-sucedido
+    data_login_sucesso = {
+        "username": "joaosilva",
+        "senha": "senha123"
+    }
+    response_sucesso = self.client.post(
+        reverse('login_usuario'),
+        data=json.dumps(data_login_sucesso),
+        content_type='application/json'
+    )
+
+    self.assertEqual(response_sucesso.status_code, 200)
+    response_data = response_sucesso.json()
+    self.assertIn("mensagem", response_data)
+    self.assertEqual(response_data["mensagem"], "Login realizado com sucesso!")
+    self.assertEqual(response_data["username"], "joaosilva")
+    self.assertEqual(response_data["nome"], "João")
+    self.assertEqual(response_data["sobrenome"], "Silva")
+    self.assertIsNone(response_data["imagem"])  # Nenhuma imagem foi adicionada no setup
+
+    # Cenário 2: Login com senha incorreta
+    data_senha_incorreta = {
+        "username": "joaosilva",
+        "senha": "senha_errada"
+    }
+    response_senha_incorreta = self.client.post(
+        reverse('login_usuario'),
+        data=json.dumps(data_senha_incorreta),
+        content_type='application/json'
+    )
+
+    self.assertEqual(response_senha_incorreta.status_code, 401)
+    self.assertIn("erro", response_senha_incorreta.json())
+    self.assertEqual(response_senha_incorreta.json()["erro"], "Usuário ou senha incorretos.")
+
+    # Cenário 3: Login com username inexistente
+    data_usuario_inexistente = {
+        "username": "usuario_inexistente",
+        "senha": "qualquer_senha"
+    }
+    response_usuario_inexistente = self.client.post(
+        reverse('login_usuario'),
+        data=json.dumps(data_usuario_inexistente),
+        content_type='application/json'
+    )
+
+    self.assertEqual(response_usuario_inexistente.status_code, 401)
+    self.assertIn("erro", response_usuario_inexistente.json())
+    self.assertEqual(response_usuario_inexistente.json()["erro"], "Usuário ou senha incorretos.")
+
+    # Cenário 4: Login com dados faltando
+    data_faltando_username = {"senha": "senha123"}
+    response_faltando_username = self.client.post(
+        reverse('login_usuario'),
+        data=json.dumps(data_faltando_username),
+        content_type='application/json'
+    )
+
+    self.assertEqual(response_faltando_username.status_code, 400)
+    self.assertIn("erro", response_faltando_username.json())
+
+    # Cenário 5: Método não permitido
+    response_metodo_nao_permitido = self.client.get(reverse('login_usuario'))
+    self.assertEqual(response_metodo_nao_permitido.status_code, 405)
+    self.assertEqual(response_metodo_nao_permitido.json()["erro"], "Método não permitido")
+
 
 class EventoTests(TestCase):
     def setUp(self):
