@@ -353,7 +353,7 @@ class EventoTests(TestCase):
             imagem=uploaded_image  # Imagem do evento
         )
 
-    def test_cadastrar_evento_view(self):
+    def test_cadastrar_evento_sem_preco_sem_imagem_view(self):
         """Testa o endpoint de cadastro de evento"""
         data = {
             "nome": "Curso Django",
@@ -380,6 +380,41 @@ class EventoTests(TestCase):
         # Verificar se o evento foi criado corretamente
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
+        
+    def test_cadastrar_evento_view(self):
+        """Testa o endpoint de cadastro de evento"""
+        # Dados para o novo evento
+        data = {
+            "nome": "Curso Django",
+            "data": "2025-02-01",
+            "horario": "15:00:00",
+            "tipo": "online",
+            "local": "Zoom",
+            "link": "https://zoom.com/meeting",
+            "descricao": "Curso intensivo de Django",
+            "preco": "200.00"
+        }
+
+        # Simular envio com 'multipart/form-data'
+        response = self.client.post(
+            reverse('cadastrar_evento'),
+            data={
+                **data,
+                "imagem": self.uploaded_image  # Envio da imagem simulada
+            },
+            format="multipart"
+        )
+
+        # Verifica se o evento foi cadastrado corretamente
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
+
+        # Verifica os dados do evento cadastrado
+        evento_cadastrado = Evento.objects.get(nome="Curso Django")
+        self.assertEqual(evento_cadastrado.tipo, "online")
+        self.assertEqual(evento_cadastrado.local, "Zoom")
+        self.assertEqual(float(evento_cadastrado.preco), 200.00)
+        self.assertIsNotNone(evento_cadastrado.imagem)        
 
     def test_listar_eventos_view(self):
         """Testa o endpoint de listagem de eventos"""
