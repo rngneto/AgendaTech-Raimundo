@@ -60,6 +60,46 @@ class UsuarioTests(TestCase):
         self.assertEqual(len(usuarios), 1)
         self.assertEqual(usuarios[0]['nome'], "João")
 
+def test_criar_usuario_imagem(self):
+    """Testa a criação de um usuário com imagem"""
+
+    # Criando uma imagem em memória para simular o upload
+    image = BytesIO()
+    Image.new('RGB', (100, 100), color='green').save(image, 'JPEG')
+    image.seek(0)
+    uploaded_image = SimpleUploadedFile("test_user_image.jpg", image.getvalue(), content_type="image/jpeg")
+
+    # Dados do usuário
+    data = {
+        "nome": "Maria",
+        "sobrenome": "Santos",
+        "username": "mariasantos",
+        "senha": "senha456",
+        "imagem": uploaded_image
+    }
+
+    # Envia a requisição POST para criar o usuário
+    response = self.client.post(
+        reverse('cadastrar_usuario'),
+        data=data,
+        format="multipart"  # Formato necessário para envio de arquivos
+    )
+
+    # Verificação da resposta
+    self.assertEqual(response.status_code, 201)
+    response_data = response.json()
+    self.assertIn("mensagem", response_data)
+    self.assertEqual(response_data["mensagem"], "Usuário cadastrado com sucesso!")
+    self.assertEqual(response_data["username"], "mariasantos")
+    self.assertIsNotNone(response_data["imagem"], "A imagem deveria ser salva e retornar uma URL.")
+
+    # Verifica se o usuário foi salvo no banco de dados
+    usuario = Usuario.objects.get(username="mariasantos")
+    self.assertEqual(usuario.nome, "Maria")
+    self.assertEqual(usuario.sobrenome, "Santos")
+    self.assertEqual(usuario.username, "mariasantos")
+    self.assertIsNotNone(usuario.imagem, "A imagem deveria estar salva no banco de dados.")
+    self.assertTrue(usuario.imagem.name.startswith("usuarios/"), "A imagem não foi salva no diretório correto.")
 
 class EventoTests(TestCase):
     def setUp(self):
