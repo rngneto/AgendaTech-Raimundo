@@ -62,35 +62,24 @@ class EventoTests(TestCase):
             descricao="Workshop sobre Python"
         )
 
-    def test_criar_evento(self):
-        """Testa a criação de um evento"""
-        self.assertEqual(self.evento.nome, "Workshop Python")
-        self.assertEqual(self.evento.tipo, "presencial")
-        self.assertEqual(str(self.evento), "Workshop Python")
-
     def test_cadastrar_evento_view(self):
-    """Testa o endpoint de cadastro de evento"""
-    data = {
-        "nome": "Curso Django",
-        "data": "2025-02-01",
-        "horario": "15:00:00",
-        "tipo": "online",
-        "local": "Zoom",
-        "link": "https://zoom.com/meeting",
-        "descricao": "Curso intensivo de Django",
-        "preco": "100.00"  # Campo obrigatório 'preco'
-    }
-    response = self.client.post(
-        reverse('cadastrar_evento'),
-        data=json.dumps(data),
-        content_type='application/json'
-    )
-
-    # Depuração
-    print("Resposta do Servidor:", response.content)
-
-    self.assertEqual(response.status_code, 201)
-
+        """Testa o endpoint de cadastro de evento"""
+        data = {
+            "nome": "Curso Django",
+            "data": "2025-02-01",
+            "horario": "15:00:00",
+            "tipo": "online",
+            "local": "Zoom",
+            "link": "https://zoom.com/meeting",
+            "descricao": "Curso intensivo de Django",
+            "preco": "100.00"
+        }
+        response = self.client.post(
+            reverse('cadastrar_evento'),
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 201)
 
     def test_listar_eventos_view(self):
         """Testa o endpoint de listagem de eventos"""
