@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.conf import settings
 from django.db import connection
-from .models import Usuario, Evento
+from .models import Usuario, Evento, ListaDesejos
 import json
 from datetime import date, time
 from io import BytesIO
@@ -759,3 +759,95 @@ class HomeViewTests(TestCase):
         self.assertContains(response, "Backend da Agenda Tech")
         self.assertContains(response, "Cadastrar Usuário")
         self.assertContains(response, "Listar Eventos")
+        
+class ListaDesejosTests(TestCase):
+    def setUp(self):
+        """Configuração inicial para os testes da lista de desejos"""
+        self.client = Client()
+
+        # Criar usuário e evento para os testes
+        self.usuario = Usuario.objects.create(
+            nome="João",
+            sobrenome="Silva",
+            username="joaosilva",
+            senha="senha123"
+        )
+        self.evento = Evento.objects.create(
+            nome="Workshop Python",
+            data=date(2025, 1, 15),
+            horario=time(14, 30),
+            tipo="presencial",
+            local="Centro de Convenções",
+            link="https://evento.com",
+            descricao="Workshop sobre Python",
+            preco=150.00
+        )
+
+    def test_adicionar_evento_lista_desejos(self):
+        """Testa adicionar um evento à lista de desejos"""
+        data = {
+            "usuario_id": self.usuario.id,
+            "evento_id": self.evento.id
+        }
+
+        response = self.client.post(
+            reverse('adicionar_a_lista'),
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+
+        # Verifica se a resposta é 201 (criado)
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("message", response.json())
+        self.assertEqual(response.json()["message"], "Evento adicionado à lista de desejos!")
+
+        # Verifica se o evento foi adicionado à lista de desejos
+        self.assertTrue(ListaDesejos.objects.filter(usuario=self.usuario, evento=self.evento).exists())
+
+    def test_adicionar_evento_repetido_lista_desejos(self):
+        """Testa tentar adicionar um evento repetido à lista de desejos"""
+        # Adiciona o evento inicialmente
+        ListaDesejos.objects.create(usuario=self.usuario, evento=self.evento)
+
+        data = {
+            "usuario_id": self.usuario.id,
+            "evento_id": self.evento.id
+        }
+
+        response = self.client.post(
+            reverse('adicionar_a_lista'),
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+
+        # Verifica se a resposta é 400 (evento já na lista)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("message", response.json())
+        self.assertEqual(response.json()["message"], "Evento já está na lista de desejos!")
+
+    def test_adicionar_evento_lista_desejos_ids_invalidos(self):
+        """Testa adicionar à lista de desejos com IDs inválidos"""
+        data = {
+            "usuario_id": None,  # ID inválido
+            "evento_id": self.evento.id
+        }
+
+        response = self.client.post(
+            reverse('adicionar_a_lista'),
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+
+        # Verifica se a resposta é 400 (erro nos IDs)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.json())
+        self.assertEqual(response.json()["error"], "IDs inválidos fornecidos.")
+
+    def test_metodo_nao_permitido(self):
+        """Testa método não permitido no endpoint"""
+        response = self.client.get(reverse('adicionar_a_lista'))
+
+        # Verifica se a resposta é 405 (método não permitido)
+        self.assertEqual(response.status_code, 405)
+        self.assertIn("error", response.json())
+        self.assertEqual(response.json()["error"], "Método não permitido. Use POST.")
