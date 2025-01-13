@@ -66,20 +66,27 @@ class EventoTests(TestCase):
         """Testa o endpoint de cadastro de evento"""
         data = {
             "nome": "Curso Django",
-            "data": "2025-02-01",
-            "horario": "15:00:00",
+            "data": "2025-02-01",  # Formato YYYY-MM-DD
+            "horario": "15:00:00",  # Formato HH:MM:SS
             "tipo": "online",
             "local": "Zoom",
             "link": "https://zoom.com/meeting",
             "descricao": "Curso intensivo de Django",
-            "preco": "100.00"
+            "preco": "100.00"  # Deve ser uma string representando um número
         }
+
         response = self.client.post(
             reverse('cadastrar_evento'),
-            data=json.dumps(data),
-            content_type='application/json'
+            data=data,  # Não precisa de json.dumps pois request.POST espera um dicionário
+            content_type='application/x-www-form-urlencoded'  # Formato do formulário
         )
+
+        # Adicionado para depuração
+        print("Status Code:", response.status_code)
+        print("Response Content:", response.content.decode())
+
         self.assertEqual(response.status_code, 201)
+        self.assertTrue(Evento.objects.filter(nome="Curso Django").exists())
 
     def test_listar_eventos_view(self):
         """Testa o endpoint de listagem de eventos"""
