@@ -1,16 +1,16 @@
+import os
+import zipfile
+import shutil
+import json
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.conf import settings
 from django.db import connection
-from .models import Usuario, Evento, ListaDesejos
-import json
-from datetime import date, time
-from io import BytesIO
-from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
-import os
-import zipfile
-import shutil
+from .models import Usuario, Evento, ListaDesejos
+from PIL import Image
+from io import BytesIO
+from datetime import date, time
 
 class UsuarioTests(TestCase):
     def setUp(self):
@@ -851,3 +851,37 @@ class ListaDesejosTests(TestCase):
         self.assertEqual(response.status_code, 405)
         self.assertIn("error", response.json())
         self.assertEqual(response.json()["error"], "Método não permitido. Use POST.")
+    
+    def test_listar_lista_desejos(self):
+        """Testa o endpoint de listagem da lista de desejos"""
+        response = self.client.get(
+            reverse('listar_lista_desejos'),
+            {"usuario_id": self.usuario.id}
+        )
+
+        # Verifica se o status é 200
+        self.assertEqual(response.status_code, 200)
+
+        # Verifica o conteúdo retornado
+        response_data = response.json()
+        self.assertIn("eventos", response_data)
+        self.assertEqual(len(response_data["eventos"]), 2)
+
+        # Verifica os detalhes dos eventos na lista de desejos
+        evento1_data = response_data["eventos"][0]
+        self.assertEqual(evento1_data["nome"], self.evento1.nome)
+        self.assertEqual(evento1_data["local"], self.evento1.local)
+
+        evento2_data = response_data["eventos"][1]
+        self.assertEqual(evento2_data["nome"], self.evento2.nome)
+        self.assertEqual(evento2_data["local"], self.evento2.local)
+
+    def test_listar_lista_desejos_usuario_nao_especificado(self):
+        """Testa a tentativa de listar a lista de desejos sem especificar um usuário"""
+        response = self.client.get(reverse('listar_lista_desejos'))
+
+        # Verifica se o status é 400 e a mensagem de erro
+        self.assertEqual(response.status_code, 400)
+        response_data = response.json()
+        self.assertIn("error", response_data)
+        self.assertEqual(response_data["error"], "Usuário não especificado.")
