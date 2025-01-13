@@ -606,7 +606,36 @@ class BackupTests(TestCase):
         # Remove o arquivo de teste gerado
         os.remove(backup_file)
 
+    def test_restaurar_backup_sucesso(self):
+        """Testa a restauração do backup com um arquivo válido."""
+        response = self.client.post(
+            self.backup_url,
+            {'backup': self.zip_content},
+            format='multipart'
+        )
 
+        # Verifica se o status é 200 e a mensagem de sucesso
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('success', response.json())
+        self.assertEqual(response.json()['success'], "Backup restaurado com sucesso!")
+
+        # Verifica se os arquivos foram extraídos corretamente
+        db_path = os.path.join(settings.BASE_DIR, 'db.sqlite3')
+        media_user_path = os.path.join(settings.BASE_DIR, 'media', 'usuarios', 'test_image.jpg')
+        media_event_path = os.path.join(settings.BASE_DIR, 'media', 'eventos', 'test_event.jpg')
+
+        self.assertTrue(os.path.exists(db_path), "O banco de dados não foi restaurado corretamente.")
+        self.assertTrue(os.path.exists(media_user_path), "O arquivo de mídia do usuário não foi restaurado.")
+        self.assertTrue(os.path.exists(media_event_path), "O arquivo de mídia do evento não foi restaurado.")
+
+    def test_restaurar_backup_arquivo_nao_enviado(self):
+        """Testa a restauração do backup sem enviar um arquivo."""
+        response = self.client.post(self.backup_url, {}, format='multipart')
+
+        # Verifica se o status é 400 e retorna erro
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.json())
+        self.assertEqual(response.json()['error'], "Nenhum arquivo foi enviado.")
 
 
 
