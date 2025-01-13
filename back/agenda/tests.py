@@ -333,6 +333,14 @@ class EventoTests(TestCase):
     def setUp(self):
         """Configuração inicial para os testes de Evento"""
         self.client = Client()
+
+        # Criando uma imagem em memória para simular o upload
+        image = BytesIO()
+        Image.new('RGB', (100, 100), color='blue').save(image, 'JPEG')
+        image.seek(0)
+        uploaded_image = SimpleUploadedFile("test_image.jpg", image.getvalue(), content_type="image/jpeg")
+
+        # Criando o evento com todos os campos
         self.evento = Evento.objects.create(
             nome="Workshop Python",
             data=date(2025, 1, 15),
@@ -340,7 +348,9 @@ class EventoTests(TestCase):
             tipo="presencial",
             local="Centro de Convenções",
             link="https://evento.com",
-            descricao="Workshop sobre Python"
+            descricao="Workshop sobre Python",
+            preco=150.00,  # Preço do evento
+            imagem=uploaded_image  # Imagem do evento
         )
 
     def test_cadastrar_evento_view(self):
