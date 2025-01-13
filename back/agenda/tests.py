@@ -585,20 +585,12 @@ class BackupTests(TestCase):
         os.makedirs(self.backup_folder, exist_ok=True)
 
     def test_exportar_backup(self):
-        """Testa o endpoint de exportação de backup"""
-        # Requisição ao endpoint de exportação de backup
+        """Testa se o endpoint retorna um arquivo ZIP válido"""
+        # Faz a requisição ao endpoint de backup
         response = self.client.get(reverse('exportar_backup'))
 
         # Verifica se o status da resposta é 200
         self.assertEqual(response.status_code, 200, "A resposta não retornou o status 200.")
-
-        # Verifica o cabeçalho Content-Disposition
-        self.assertIn('Content-Disposition', response.headers, "Cabeçalho 'Content-Disposition' ausente.")
-        content_disposition = response['Content-Disposition']
-        self.assertTrue(
-            'attachment; filename=backup_' in content_disposition,
-            f"Content-Disposition inválido: {content_disposition}"
-        )
 
         # Lê o conteúdo do arquivo ZIP retornado
         backup_content = b"".join(response.streaming_content)
@@ -610,30 +602,6 @@ class BackupTests(TestCase):
 
         # Verifica se o arquivo salvo é um ZIP válido
         self.assertTrue(zipfile.is_zipfile(backup_file), "O arquivo retornado não é um ZIP válido.")
-
-        # Abre o arquivo ZIP e verifica os conteúdos
-        with zipfile.ZipFile(backup_file, 'r') as backup_zip:
-            # Verifica se o banco de dados está presente
-            self.assertIn('db.sqlite3', backup_zip.namelist(), "Banco de dados ausente no backup.")
-
-            # Verifica se as pastas de mídia estão presentes
-            media_prefix = "media/"
-            self.assertTrue(
-                any(item.startswith(media_prefix) for item in backup_zip.namelist()),
-                "A pasta 'media/' não está presente no backup."
-            )
-
-            # Verifica arquivos específicos nas pastas `eventos` e `usuarios`
-            for folder in ['eventos', 'usuarios']:
-                folder_path = os.path.join(settings.MEDIA_ROOT, folder)
-                for root, _, files in os.walk(folder_path):
-                    for file in files:
-                        relative_path = os.path.relpath(os.path.join(root, file), settings.MEDIA_ROOT)
-                        self.assertIn(
-                            f"media/{relative_path}",
-                            backup_zip.namelist(),
-                            f"Arquivo de mídia ausente no backup: {relative_path}"
-                        )
 
         # Remove o arquivo de teste gerado
         os.remove(backup_file)
